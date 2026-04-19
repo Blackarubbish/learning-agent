@@ -11,3 +11,10 @@ wheels/
 
 # Environment variables
 .env
+
+# FAISS indices
+faiss_index/
+indices/
+
+# Agent guide
+AgentGuide/
