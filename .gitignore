@@ -18,3 +18,7 @@ indices/
 
 # Agent guide
 AgentGuide/
+
+# Runtime files
+server.log
+uploads/
