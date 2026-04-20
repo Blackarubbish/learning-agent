@@ -10,11 +10,22 @@
 
 | 序号 | 主题 | 目录 | 状态 |
 |------|------|------|------|
-| 01 | FastAPI 快速入门 | `learning/01-fastapi/` | ✅ 完成 |
-| 02 | LangChain 核心概念 | `learning/02-langchain/` | ✅ 完成 |
-| 03 | RAG Part 1 - 文档加载与分割 | `learning/03-rag-part1/` | ✅ 完成 |
-| 04 | RAG Part 2 - 向量化与存储 | `learning/04-rag-part2/` | ✅ 完成 |
-| 05 | Naive RAG 实战 | `learning/05-naive-rag/` | 🔄 进行中 |
+| 01 | FastAPI 快速入门 | `learning/stage1-rag-basics/01-fastapi/` | ✅ 完成 |
+| 02 | LangChain 核心概念 | `learning/stage1-rag-basics/02-langchain/` | ✅ 完成 |
+| 03 | RAG Part 1 - 文档加载与分割 | `learning/stage1-rag-basics/03-rag-part1/` | ✅ 完成 |
+| 04 | RAG Part 2 - 向量化与存储 | `learning/stage1-rag-basics/04-rag-part2/` | ✅ 完成 |
+| 05 | Naive RAG 实战 | `learning/stage1-rag-basics/05-naive-rag/` | ✅ 完成 |
+
+### 进行中
+
+| 序号 | 主题 | 目录 | 状态 |
+|------|------|------|------|
+| 06 | Query Transformation | `learning/stage2-advanced-rag/06-query-transformation/` | 🔄 进行中 |
+| 07 | 混合检索与 Rerank | `learning/stage2-advanced-rag/07-hybrid-retriever-rerank/` | 📌 待学习 |
+| 08 | RAG 评估体系 | `learning/stage2-advanced-rag/08-rag-evaluation/` | 📌 待学习 |
+| 09 | Milvus 向量数据库 | `learning/stage2-advanced-rag/09-milvus/` | 📌 待学习 |
+| 10 | 高级数据处理 | `learning/stage2-advanced-rag/10-advanced-data-processing/` | 📌 待学习 |
+| 11 | 周度总结 | `learning/stage2-advanced-rag/11-weekly-summary/` | 📌 待学习 |
 
 ### 学习路径（开发工程师方向）
 
@@ -30,7 +41,19 @@ Week 6: Multi-Agent Systems (AutoGen, CrewAI)
 ## 当前进度
 
 - **已完成章节**: 05 - Naive RAG 实战
-- **下次学习**: Advanced RAG + Milvus
+- **当前学习**: 06 - Query Transformation (Day 8)
+- **下次学习**: 07 - 混合检索与 Rerank
+
+## 学习路径（开发工程师方向）
+
+```
+Week 1: FastAPI + LangChain + Naive RAG              ✅ 已完成
+Week 2: Advanced RAG + Milvus                        🔄 进行中
+Week 3: Agent Development & Tool Calling
+Week 4: Performance Optimization (Redis, Async, vLLM)
+Week 5: Monitoring & Deployment (Docker, Prometheus)
+Week 6: Multi-Agent Systems (AutoGen, CrewAI)
+```
 
 ## 学习规则
 
