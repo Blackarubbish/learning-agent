@@ -20,8 +20,8 @@
 
 | 序号 | 主题 | 目录 | 状态 |
 |------|------|------|------|
-| 06 | Query Transformation | `learning/stage2-advanced-rag/06-query-transformation/` | 🔄 进行中 |
-| 07 | 混合检索与 Rerank | `learning/stage2-advanced-rag/07-hybrid-retriever-rerank/` | 📌 待学习 |
+| 06 | Query Transformation | `learning/stage2-advanced-rag/06-query-transformation/` | ✅ 完成 |
+| 07 | 混合检索与 Rerank | `learning/stage2-advanced-rag/07-hybrid-retriever-rerank/` | ✅ 完成 |
 | 08 | RAG 评估体系 | `learning/stage2-advanced-rag/08-rag-evaluation/` | 📌 待学习 |
 | 09 | Milvus 向量数据库 | `learning/stage2-advanced-rag/09-milvus/` | 📌 待学习 |
 | 10 | 高级数据处理 | `learning/stage2-advanced-rag/10-advanced-data-processing/` | 📌 待学习 |
@@ -40,15 +40,15 @@ Week 6: Multi-Agent Systems (AutoGen, CrewAI)
 
 ## 当前进度
 
-- **已完成章节**: 05 - Naive RAG 实战
-- **当前学习**: 06 - Query Transformation (Day 8)
-- **下次学习**: 07 - 混合检索与 Rerank
+- **已完成章节**: 07 - 混合检索与 Rerank
+- **当前学习**: 08 - RAG 评估体系 (Day 10)
+- **下次学习**: 09 - Milvus 向量数据库
 
 ## 学习路径（开发工程师方向）
 
 ```
 Week 1: FastAPI + LangChain + Naive RAG              ✅ 已完成
-Week 2: Advanced RAG + Milvus                        🔄 进行中
+Week 2: Advanced RAG + Milvus                        ✅ 已完成
 Week 3: Agent Development & Tool Calling
 Week 4: Performance Optimization (Redis, Async, vLLM)
 Week 5: Monitoring & Deployment (Docker, Prometheus)
