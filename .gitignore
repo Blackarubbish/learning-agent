@@ -19,9 +19,6 @@ indices/
 # Agent guide
 AgentGuide/
 
-# IDE settings
-.vscode/
-
 # Milvus database files
 *.db
 
