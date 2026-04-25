@@ -22,7 +22,7 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 |------|------|------|---------|
 | 06 | Query Transformation | ✅ | - |
 | 07 | 混合检索与 Rerank | ✅ | - |
-| 08 | RAG 评估体系 | 📌 待学习 | - |
+| 08 | RAG 评估体系 | ✅ | 2026-04-25 |
 | 09 | Milvus 向量数据库 | ✅ | 2026-04-25 |
 | 10 | 高级数据处理 | ✅ | 2026-04-25 |
 | 11 | 周度总结 | 📌 待学习 | - |
@@ -104,7 +104,7 @@ Week 6: Multi-Agent Systems (AutoGen, CrewAI)
 
 ```
 agent-study/
-├── AGENT.md              # Agent 行为规则（所有 AI 助手的指令集）
+├── CLAUDE.md             # Agent 行为规则（所有 AI 助手的指令集，唯一源头）
 ├── STUDY_PROGRESS.md     # 本文件 — 学习进度 + 能力自评
 ├── CONCEPT_MAP.md        # 概念地图（Mermaid 可视化）
 ├── README.md             # 项目说明
