@@ -20,6 +20,36 @@ dependencies = [
     "ragas>=0.4.3",
     "rank-bm25>=0.2.2",
     "recursivecharactertextsplitter>=0.1.0",
+    "setuptools<82",
+    "unstructured[html]>=0.22.23",
     "uvicorn>=0.44.0",
     "zai-sdk>=0.2.2",
 ]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15.12",
+]
+
+[tool.ruff]
+target-version = "py314"
+line-length = 100
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "I",   # isort - import 排序
+    "N",   # pep8-naming - 命名规范
+    "B",   # flake8-bugbear - 常见 bug 检查
+    "SIM", # flake8-simplify - 简化代码建议
+    "UP",  # pyupgrade - 现代 Python 语法建议
+]
+ignore = []
+fixable = ["ALL"]

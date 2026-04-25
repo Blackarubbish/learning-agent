@@ -19,6 +19,15 @@ indices/
 # Agent guide
 AgentGuide/
 
+# IDE settings
+.vscode/
+
+# Milvus database files
+*.db
+
+# Deepeval cache
+.deepeval/
+
 # Runtime files
 server.log
 uploads/

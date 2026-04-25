@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head><meta charset="UTF-8"><title>2024 AI 技术发展报告</title></head>
+<body>
+
+<h1>2024 AI 技术发展报告</h1>
+
+<h2>一、大语言模型进展</h2>
+<p>2024年，大语言模型（LLM）取得了显著进展。GPT-4o、Claude 3.5、Gemini 1.5 等模型在推理能力、多模态理解和长上下文处理方面均有突破。特别是上下文窗口从 128K 扩展到 1M tokens，使得处理超长文档成为可能。</p>
+
+<p>开源模型同样表现亮眼，Llama 3、Qwen 2、DeepSeek V2 等模型在多项基准测试中逼近闭源模型水平，推动了 AI 民主化进程。</p>
+
+<h2>二、RAG 技术演进</h2>
+<p>检索增强生成（RAG）在 2024 年进入成熟期。主要进展包括：</p>
+<ul>
+<li>混合检索：结合向量检索和关键词检索（BM25），提升召回率</li>
+<li>Rerank 精排：在粗筛后用交叉编码器做二次排序</li>
+<li>查询变换：MultiQuery、HyDE 等方法优化用户查询</li>
+<li>评估体系：Ragas、DeepEval 等框架使 RAG 评估标准化</li>
+</ul>
+
+<h2>三、模型性能对比</h2>
+
+<table border="1">
+  <tr><th>模型</th><th>参数量</th><th>上下文长度</th><th>MMLU 分数</th></tr>
+  <tr><td>GPT-4o</td><td>未公开</td><td>128K</td><td>88.7</td></tr>
+  <tr><td>Claude 3.5 Sonnet</td><td>未公开</td><td>200K</td><td>88.3</td></tr>
+  <tr><td>Gemini 1.5 Pro</td><td>未公开</td><td>1M</td><td>85.9</td></tr>
+  <tr><td>Llama 3 70B</td><td>70B</td><td>8K</td><td>82.0</td></tr>
+  <tr><td>Qwen 2 72B</td><td>72B</td><td>128K</td><td>84.2</td></tr>
+</table>
+
+<h2>四、向量数据库选型</h2>
+
+<table border="1">
+  <tr><th>数据库</th><th>部署方式</th><th>最大规模</th><th>属性过滤</th></tr>
+  <tr><td>FAISS</td><td>内存</td><td>千万级</td><td>不支持</td></tr>
+  <tr><td>Milvus</td><td>分布式</td><td>十亿级</td><td>支持</td></tr>
+  <tr><td>Chroma</td><td>单机</td><td>百万级</td><td>支持</td></tr>
+  <tr><td>Pinecone</td><td>云服务</td><td>十亿级</td><td>支持</td></tr>
+</table>
+
+<h2>五、总结与展望</h2>
+<p>2024年是 AI 应用落地的一年。RAG、Agent、多模态等技术从实验室走向生产环境。预计2025年，AI Agent 的自主能力将进一步提升，多 Agent 协作系统将成为新的技术热点。</p>
+
+</body>
+</html>
