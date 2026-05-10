@@ -58,11 +58,22 @@ graph TD
         Ragas --> DeepEval[DeepEval 替代方案]
     end
 
+    %% ====== Agent 层 ======
+    subgraph Agent
+        ReAct[ReAct 框架<br/>推理+行动循环]
+        Tools[自定义工具<br/>Calculator/String/API]
+        AgentMemory[Agent Memory<br/>对话历史/上下文管理]
+        ReAct --> Tools
+        Tools --> LLM
+        AgentMemory --> ReAct
+    end
+
     %% ====== 样式 ======
     style RAG fill:#f9f,stroke:#333,stroke-width:4px
     style RRF fill:#bbf,stroke:#333,stroke-width:2px
     style Rerank fill:#bfb,stroke:#333,stroke-width:2px
     style Ragas fill:#fbb,stroke:#333,stroke-width:2px
+    style ReAct fill:#fcf,stroke:#333,stroke-width:3px
 ```
 
 ---
@@ -78,6 +89,7 @@ graph TD
 | 09 | Milvus 向量数据库 | FAISS | Milvus 是 FAISS 的生产级替代：多了增删改查、属性过滤、持久化、分布式 |
 | 10 | 文档解析 (Unstructured) | TextLoader + 文本分割 | 解析能按结构分类（标题/正文/表格），避免分块截断和结构信息丢失 |
 | 11 | AdvancedRAG 集成管线 | Query Transform + 混合检索 + Rerank | 管线串联：Multi-Query 改写决定天花板，混合检索互补盲区，Rerank 精排降噪，Faithfulness 防幻觉 |
+| 12 | Agent / ReAct | LLM + Tools | RAG 是单向检索→生成，Agent 是循环思考→行动→观察→再思考，能调用外部工具完成任务 |
 
 <!-- 继续往下写... -->
 

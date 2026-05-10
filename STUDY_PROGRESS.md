@@ -27,6 +27,18 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 | 10 | 高级数据处理 | ✅ | 2026-04-25 |
 | 11 | 周度总结 | ✅ | 2026-05-09 |
 
+### 第三阶段：Agent 开发与 Tool Calling
+
+| 序号 | 主题 | 状态 | 完成日期 |
+|------|------|------|---------|
+| 12 | Agent 核心概念 (ReAct) | 📌 待学习 | - |
+| 13 | 自定义工具开发 | 📌 待学习 | - |
+| 14 | SQL & 数据库工具 | 📌 待学习 | - |
+| 15 | Function Calling 实战 | 📌 待学习 | - |
+| 16 | Agent Memory | 📌 待学习 | - |
+| 17 | Agent 错误处理 | 📌 待学习 | - |
+| 18 | 周度总结与 Agent 项目 | 📌 待学习 | - |
+
 ---
 
 ## 能力自评
@@ -97,8 +109,8 @@ Week 6: Multi-Agent Systems (AutoGen, CrewAI)
 ## 当前进度
 
 - **已完成章节**: 11 - 周度总结（Week 2 全部完成）
-- **当前学习**: 无
-- **下次学习**: Week 3 — Agent Development & Tool Calling（第 12 章）
+- **当前学习**: 12 - Agent 核心概念 (ReAct)
+- **下次学习**: 12 - Agent 核心概念 (ReAct)
 
 ---
 
@@ -132,6 +144,14 @@ agent-study/
         ├── 09-milvus/
         ├── 10-advanced-data-processing/
         └── 11-weekly-summary/
+    └── stage3-agent-development/
+        ├── 12-agent-basics/
+        ├── 13-custom-tools/
+        ├── 14-sql-agent/
+        ├── 15-function-calling/
+        ├── 16-agent-memory/
+        ├── 17-error-handling/
+        └── 18-weekly-summary/
 ```
 
 ---
