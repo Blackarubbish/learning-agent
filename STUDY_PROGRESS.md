@@ -25,7 +25,7 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 | 08 | RAG 评估体系 | ✅ | 2026-04-25 |
 | 09 | Milvus 向量数据库 | ✅ | 2026-04-25 |
 | 10 | 高级数据处理 | ✅ | 2026-04-25 |
-| 11 | 周度总结 | 📌 待学习 | - |
+| 11 | 周度总结 | ✅ | 2026-05-09 |
 
 ---
 
@@ -52,17 +52,19 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 | 能力维度 | 自评 | 证据 |
 |---------|------|------|
 | 我能实现 BM25 检索器 | 4 | 独立实现了 BM25 封装 |
-| 我能解释 RRF 融合原理并实现 | 3 | 能写出代码但不确定 k=60 为什么 |
-| 我能解释 Rerank 的作用和原理 | 3 | 理解粗排→精排的管线 |
-| 我能从零搭建混合检索+Rerank管线 | 4 | 独立完成了 hybrid_rerank_retriever.py |
+| 我能解释 RRF 融合原理并实现 | 4 | 独立完成 RRF 融合，理解 k=60 的作用 |
+| 我能解释 Rerank 的作用和原理 | 4 | 理解粗排→精排的管线，完成智谱 Rerank 接入 |
+| 我能从零搭建混合检索+Rerank管线 | 5 | 独立完成 AdvancedRAG 全管线，能对比解释各环节贡献 |
+| 我能整合 Query Transformation + 混合检索 + Rerank 到统一系统 | 4 | 独立完成了 11 章综合实战 |
 
 ### 评估体系
 
 | 能力维度 | 自评 | 证据 |
 |---------|------|------|
-| 我能解释 Faithfulness 的含义 | 2 | 读了笔记，没动手跑过 |
+| 我能解释 Faithfulness 的含义 | 4 | 通过对比实验理解了 Faithfulness 是检测幻觉最直接的指标 |
 | 我能用 Ragas 评估 RAG 系统 | 1 | 还没开始 |
 | 我能设计评估数据集（ground truth） | 1 | 还没开始 |
+| 我能区分 Faithfulness / Answer Relevancy / Answer Correctness 的适用场景 | 3 | 在综合讨论中理解了三个指标的检测目标差异 |
 
 ### 向量数据库
 
@@ -85,7 +87,7 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 
 ```
 Week 1: FastAPI + LangChain + Naive RAG              ✅ 已完成
-Week 2: Advanced RAG + Milvus                        🔄 进行中 (06-07 ✅, 08-11 📌)
+Week 2: Advanced RAG + Milvus                        ✅ 已完成 (06-11)
 Week 3: Agent Development & Tool Calling
 Week 4: Performance Optimization (Redis, Async, vLLM)
 Week 5: Monitoring & Deployment (Docker, Prometheus)
@@ -94,9 +96,9 @@ Week 6: Multi-Agent Systems (AutoGen, CrewAI)
 
 ## 当前进度
 
-- **已完成章节**: 09 - Milvus 向量数据库
-- **当前学习**: 11 - 周度总结
-- **下次学习**: 11 - 周度总结
+- **已完成章节**: 11 - 周度总结（Week 2 全部完成）
+- **当前学习**: 无
+- **下次学习**: Week 3 — Agent Development & Tool Calling（第 12 章）
 
 ---
 
