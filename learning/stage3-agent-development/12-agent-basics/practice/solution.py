@@ -4,6 +4,12 @@ Agent 核心概念：ReAct 框架 — 完整实现
 ReAct = Reasoning + Acting
 流程：Thought → Action → Observation → Thought → ... → Final Answer
 
+关键认知：
+  - Agent 是循环而非管道，核心在于观察结果后重新决策
+  - 不是所有场景都需要 Agent：固定流程用确定性代码更可靠
+  - 错误会在多步中累积：95% 可靠性 × 20 步 = 36% 成功率 → max_steps 要小
+  - Reflection（反思）是错误恢复的基础：让 Agent 看到错误信息后自我修正
+
 运行：
   make run f=learning/stage3-agent-development/12-agent-basics/practice/solution.py
 """
@@ -304,5 +310,27 @@ if __name__ == "__main__":
     print(f"答案: {result['answer']}")
     check("使用了多个工具", len(result["steps"]) >= 2)
     check("答案包含 9", "9" in result["answer"])
+
+    # 4. Reflection 反思测试
+    section("4. Reflection: 错误恢复测试")
+    # Agent 的错误恢复能力取决于：
+    #   1. 工具的报错信息是否足够清晰，让 LLM 知道如何修正
+    #   2. max_steps 是否足够（每次修正消耗一步）
+    #   3. parse_error 的反馈是否指明了具体的格式问题
+    #
+    # 本章实现的 Reflection 是基础版本：出错 → 反馈错误 → 重新推理
+    # 第 17 章会深入：Reflexion（自我反思）、重试与降级、错误分类
+
+    # 测试：如果给 string_tool 传了不支持的操作，Agent 能否根据错误信息修正？
+    result = agent.run("把 'Hello World' 每个单词变成首字母大写")
+    print(f"问题: 把 'Hello World' 每个单词变成首字母大写")
+    print(f"答案: {result['answer']}")
+    print(f"步骤数: {len(result['steps'])}")
+    for i, step in enumerate(result["steps"]):
+        if step["type"] == "action":
+            print(f"  步骤 {i+1}: {step['tool']} → {step['result'][:80]}")
+        elif step["type"] == "parse_error":
+            print(f"  步骤 {i+1}: parse_error → Agent 尝试修正格式")
+    check("Agent 尝试处理了复杂字符串需求", len(result["answer"]) > 0)
 
     summary()

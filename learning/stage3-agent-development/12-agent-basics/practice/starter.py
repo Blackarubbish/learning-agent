@@ -3,6 +3,11 @@ Agent 核心概念：从零理解 ReAct 框架
 
 目标：构建一个能使用工具的 Agent，理解 "思考 → 行动 → 观察" 循环。
 
+核心认知（开始前读）：
+  - Agent ≠ 管道：Agent 是 循环 而非 单向流程，关键区别在于"观察结果后重新决策"
+  - 不是所有场景都需要 Agent：固定流程用普通代码更可靠（Anthropic 原则）
+  - 错误会累积：每一步可靠性 95%，20 步后只有 36%
+
 运行：
   make run f=learning/stage3-agent-development/12-agent-basics/practice/starter.py
 """
@@ -97,6 +102,11 @@ class SimpleAgent:
     2. 解析 LLM 输出
     3. 如果是 Action: 执行工具 → 将结果拼回 context → 返回步骤 1
     4. 如果是 Final Answer: 结束循环，返回答案
+    5. 如果是 parse_error: 将错误信息反馈给 LLM → 让它自我修正（这就是 Reflection 的雏形）
+
+    关键设计：工具返回的结果会作为 Observation 拼回下轮 prompt。
+    这意味着 Agent 能看到自己的行动结果，并据此重新推理。
+    如果工具执行失败，把错误信息作为 Observation 返回——Agent 会尝试修正（反思）。
     """
 
     def __init__(self, llm, tools: dict):
@@ -158,5 +168,13 @@ if __name__ == "__main__":
     # print(f"答案: {result['answer']}")
     # print(f"步骤数: {len(result['steps'])}")
     # check("Agent 使用了多个工具", len(result["steps"]) >= 2)
+
+    section("4. 反思：错误恢复测试")
+    # 故意调用不存在的工具，观察 Agent 是否能根据错误信息自我修正
+    # result = agent.run("帮我把 'hello' 变成大写")
+    # 注意：如果 Agent 没有 string 工具，或者工具名写错了，观察它如何处理
+    # print(f"问题: 帮我把 'hello' 变成大写")
+    # print(f"结果: {result}")
+    # 思考：你的 Agent 在 parse_error 发生后尝试了几次才修正？
 
     summary()
