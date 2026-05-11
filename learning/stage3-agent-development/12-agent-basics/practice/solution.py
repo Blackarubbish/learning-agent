@@ -14,14 +14,14 @@ ReAct = Reasoning + Acting
   make run f=learning/stage3-agent-development/12-agent-basics/practice/solution.py
 """
 
+import json
+import math
+import re
+
 from common import load_dotenv_if_needed, get_or_create_llm, section, check, summary, reset
 
 load_dotenv_if_needed()
 llm = get_or_create_llm(temperature=0)
-
-import json
-import math
-import re
 
 # ═══════════════════════════════════════════
 # 1. 工具定义
@@ -204,10 +204,16 @@ class SimpleAgent:
 
             # 调用 LLM — 用 LangChain ChatPromptTemplate 不太好处理多轮对话，
             # 这里直接用 format 拼接，因为 messages 结构很简单
-            full_prompt = "\n\n".join(
-                f"{'System' if m['role'] == 'system' else 'Human' if m['role'] == 'user' else 'AI'}: {m['content']}"
-                for m in messages
-            )
+            parts = []
+            for m in messages:
+                if m["role"] == "system":
+                    label = "System"
+                elif m["role"] == "user":
+                    label = "Human"
+                else:
+                    label = "AI"
+                parts.append(f"{label}: {m['content']}")
+            full_prompt = "\n\n".join(parts)
             response = self.llm.invoke(full_prompt)
             llm_output = response.content if hasattr(response, "content") else str(response)
 

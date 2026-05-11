@@ -31,7 +31,7 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 
 | 序号 | 主题 | 状态 | 完成日期 |
 |------|------|------|---------|
-| 12 | Agent 核心概念 (ReAct) | 📌 待学习 | - |
+| 12 | Agent 核心概念 (ReAct) | ✅ | 2026-05-12 |
 | 13 | 自定义工具开发 | 📌 待学习 | - |
 | 14 | SQL & 数据库工具 | 📌 待学习 | - |
 | 15 | Function Calling 实战 | 📌 待学习 | - |
@@ -85,6 +85,15 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 | 我能解释 FAISS 和 Milvus 的区别 | 4 | 独立完成 CRUD，理解了增量写入/属性过滤/持久化的优势 |
 | 我能用 Milvus 做 CRUD | 4 | 独立完成 starter.py 全流程 |
 
+### Agent 开发
+
+| 能力维度 | 自评 | 证据 |
+|---------|------|------|
+| 我能解释 Agent 和传统 RAG 的本质区别 | 4 | 理解 Agent 是循环而非管道，能举例说明何时不用 Agent |
+| 我能从零实现 ReAct 循环 | 4 | 独立完成 starter.py 的 SimpleAgent，含工具定义、输出解析、执行循环 |
+| 我能解释 Reflection（反思）的雏形原理 | 3 | 实现了 parse_error 反馈机制，理解错误累积问题 |
+| 我能判断什么场景该用 Agent | 3 | 理解 Anthropic "简单优先"原则，能区分确定性任务和开放式任务 |
+
 ---
 
 ## 薄弱点追踪
@@ -100,7 +109,7 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 ```
 Week 1: FastAPI + LangChain + Naive RAG              ✅ 已完成
 Week 2: Advanced RAG + Milvus                        ✅ 已完成 (06-11)
-Week 3: Agent Development & Tool Calling
+Week 3: Agent Development & Tool Calling          🔄 进行中 (12/18)
 Week 4: Performance Optimization (Redis, Async, vLLM)
 Week 5: Monitoring & Deployment (Docker, Prometheus)
 Week 6: Multi-Agent Systems (AutoGen, CrewAI)
@@ -108,9 +117,9 @@ Week 6: Multi-Agent Systems (AutoGen, CrewAI)
 
 ## 当前进度
 
-- **已完成章节**: 11 - 周度总结（Week 2 全部完成）
-- **当前学习**: 12 - Agent 核心概念 (ReAct)
-- **下次学习**: 12 - Agent 核心概念 (ReAct)
+- **已完成章节**: 12 - Agent 核心概念 (ReAct)
+- **当前学习**: 13 - 自定义工具开发
+- **下次学习**: 13 - 自定义工具开发
 
 ---
 
