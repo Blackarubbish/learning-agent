@@ -71,6 +71,14 @@ graph TD
         Tools -->|质量属性| InfoAbstraction
         Tools -->|质量属性| StatusFeedback
         Tools -->|质量属性| ErrorRecovery
+        SQLAgent[SQL Agent<br/>db_schema + db_query]
+        SchemaExplore[Schema 探索<br/>先查目录再翻书]
+        SQLSafety[SQL 安全校验<br/>只读围栏]
+        Tools -->|数据库工具| SQLAgent
+        SQLAgent -->|依赖| InfoAbstraction
+        SQLAgent -->|依赖| ErrorRecovery
+        SQLAgent -->|包含| SchemaExplore
+        SQLAgent -->|包含| SQLSafety
         AgentMemory --> ReAct
     end
 
@@ -100,6 +108,8 @@ graph TD
 | 13 | 信息抽象 | Tools → LLM | 工具返回截断+摘要+引导，防止上下文过载；LLM 按引导逐层深入，用多轮循环弥补窗口限制 |
 | 13 | 状态反馈 | Tools → ReAct | 工具报告进度+成功/失败详情+后续建议；Agent 据此在下一轮针对性地处理失败项 |
 | 13 | 错误恢复接口 | Tools → LLM | 错误信息包含"原因+可用选项+正确示例"，让 LLM 自主修正而非盲猜 |
+| 14 | Schema 探索 | Tools + 信息抽象 | Agent 先查目录再翻书——了解表结构后识别相关字段生成精确 SQL，避免 SELECT * 上下文爆炸 |
+| 14 | SQL 安全校验 | Tools + 错误恢复 | \b 独立单词匹配拦截写操作，防止 Agent 幻觉导致数据篡改/删除等不可逆灾难 |
 
 <!-- 继续往下写... -->
 
