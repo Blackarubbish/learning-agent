@@ -92,7 +92,7 @@ vectorstore = FAISS.from_documents(docs, embeddings)
 
 ### 2.5 编码规范
 
-- 双引号，行宽 100，文件末尾一个空行
+- 双引号，行宽 120，文件末尾一个空行
 - import 按 标准库 → 第三方库 → 本地模块 排序，组内字母序
 - 使用 `list`/`dict` 现代语法，避免未使用的 import 和变量
 - 项目用 ruff 格式化和 lint（配置在 pyproject.toml），`make lint` / `make format`
