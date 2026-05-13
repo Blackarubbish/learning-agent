@@ -62,9 +62,15 @@ graph TD
     subgraph Agent
         ReAct[ReAct 框架<br/>推理+行动循环]
         Tools[自定义工具<br/>Calculator/String/API]
+        InfoAbstraction[信息抽象<br/>截断/摘要/引导]
+        StatusFeedback[状态反馈<br/>进度/部分失败]
+        ErrorRecovery[错误恢复接口<br/>原因+方案+示例]
         AgentMemory[Agent Memory<br/>对话历史/上下文管理]
         ReAct --> Tools
         Tools --> LLM
+        Tools -->|质量属性| InfoAbstraction
+        Tools -->|质量属性| StatusFeedback
+        Tools -->|质量属性| ErrorRecovery
         AgentMemory --> ReAct
     end
 
@@ -74,6 +80,7 @@ graph TD
     style Rerank fill:#bfb,stroke:#333,stroke-width:2px
     style Ragas fill:#fbb,stroke:#333,stroke-width:2px
     style ReAct fill:#fcf,stroke:#333,stroke-width:3px
+    style Tools fill:#ff9,stroke:#333,stroke-width:3px
 ```
 
 ---
@@ -90,6 +97,9 @@ graph TD
 | 10 | 文档解析 (Unstructured) | TextLoader + 文本分割 | 解析能按结构分类（标题/正文/表格），避免分块截断和结构信息丢失 |
 | 11 | AdvancedRAG 集成管线 | Query Transform + 混合检索 + Rerank | 管线串联：Multi-Query 改写决定天花板，混合检索互补盲区，Rerank 精排降噪，Faithfulness 防幻觉 |
 | 12 | Agent / ReAct | LLM + Tools | RAG 是单向检索→生成，Agent 是循环思考→行动→观察→再思考，能调用外部工具完成任务 |
+| 13 | 信息抽象 | Tools → LLM | 工具返回截断+摘要+引导，防止上下文过载；LLM 按引导逐层深入，用多轮循环弥补窗口限制 |
+| 13 | 状态反馈 | Tools → ReAct | 工具报告进度+成功/失败详情+后续建议；Agent 据此在下一轮针对性地处理失败项 |
+| 13 | 错误恢复接口 | Tools → LLM | 错误信息包含"原因+可用选项+正确示例"，让 LLM 自主修正而非盲猜 |
 
 <!-- 继续往下写... -->
 

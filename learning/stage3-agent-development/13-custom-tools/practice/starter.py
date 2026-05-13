@@ -271,7 +271,45 @@ def api_fetch(endpoint: str, param: str = "") -> str:
     - 用扁平字符串参数而非嵌套 JSON——设计工具时优先考虑 LLM 容易生成的接口
     """
     # TODO: 实现 API 工具
-    pass
+
+    if endpoint not in MOCK_API:
+        available = ", ".join(MOCK_API.keys())
+        return (
+            f"❌错误: 未知端点 '{endpoint}'。可用端点: {available}。"
+            f"示例: api_fetch('weather', '北京')"
+        )
+
+    # include
+    if "weather" in endpoint:
+        if not param:
+            return (
+                "❌错误: weather 端点缺少城市参数。可用城市: ['北京','上海','深圳']。"
+                "示例: api_fetch('weather', '北京')"
+            )
+        result = MOCK_API["weather"].get(param)
+        if result:
+            return f"{param} 的天气是 {result}"
+        else:
+            return (
+                f"未找到 '{param}' 的天气信息。可用城市: ['北京','上海','深圳']。"
+                f"示例: api_fetch('weather', '北京')"
+            )
+    elif "news" in endpoint:
+        category = param if param else "tech"
+        if category not in MOCK_API["news"]:
+            return (
+                "❌错误: news 端点参数错误。可用类别: ['tech', 'science']。"
+                "示例: api_fetch('news', 'tech')"
+            )
+        return "\n".join(MOCK_API["news"][category])
+    elif "stock" in endpoint:
+        if not param:
+            return (
+                "❌错误: stock 端点缺少股票代码参数。可用代码: ['AAPL', 'GOOGL', 'TSLA']。"
+                "示例: api_fetch('stock', 'AAPL')"
+            )
+        return str(MOCK_API["stock"].get(param, f"未找到 '{param}' 的股票信息"))
+    return "❌错误: 未知错误。请检查输入参数是否正确。示例: api_fetch('weather', '北京')"
 
 
 # ═══════════════════════════════════════════
