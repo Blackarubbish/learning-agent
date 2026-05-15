@@ -34,8 +34,8 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 | 12 | Agent 核心概念 (ReAct) | ✅ | 2026-05-12 |
 | 13 | 自定义工具开发 | ✅ | 2026-05-13 |
 | 14 | SQL & 数据库工具 | ✅ | 2026-05-13 |
-| 15 | Function Calling 实战 | 📌 待学习 | - |
-| 16 | Agent Memory | 📌 待学习 | - |
+| 15 | Function Calling 实战 | ✅ | 2026-05-15 |
+| 16 | Agent Memory | ✅ | 2026-05-16 |
 | 17 | Agent 错误处理 | 📌 待学习 | - |
 | 18 | 周度总结与 Agent 项目 | 📌 待学习 | - |
 
@@ -99,6 +99,13 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 | 我能解释工具工程为什么决定 Agent 上限 | 4 | 理解 70% 工作在工具端，同样的 LLM + 不同工具 = 不同 Agent |
 | 我能从零构建安全的 SQL Agent 工具 | 4 | 独立完成 db_schema + db_query，含安全校验和信息抽象 |
 | 我能解释 Schema 探索和 SQL 安全拦截的必要性 | 4 | 理解"先看目录再翻书"模式，识别 Agent 幻觉导致数据灾难的风险 |
+| 我能将 ReAct 工具定义转换为 FC JSON Schema 格式 | 4 | 独立完成 TODO 1，含 enum 约束 |
+| 我能从零实现 bind_tools + ToolMessage 的 FC Agent 循环 | 4 | 独立完成 TODO 2，13/13 断言通过 |
+| 我能解释 tool_choice 四种模式的行为差异和适用场景 | 4 | 独立完成 TODO 3，理解 auto/required/none/指定工具的 API 级别控制 |
+| 我能对比 FC 和 ReAct 的优劣并做技术选型 | 4 | 理解 FC 的解析可靠性+并行调用优势，也知道 ReAct 在需要暴露推理链时的价值 |
+| 我能从零实现双层记忆 Agent（短期缓冲+长期向量存储） | 4 | 独立完成 ShortTermMemory + LongTermMemory + MemoryAgent |
+| 我能解释短期记忆和长期记忆在存储介质、检索方式、数据形态上的区别 | 4 | 能清晰对比内存全文 vs 向量语义检索 |
+| 我能解释定期批量提取（而非每轮提取）的设计取舍 | 4 | 理解 token 成本、性能、信息冗余的权衡 |
 
 ---
 
@@ -123,9 +130,9 @@ Week 6: Multi-Agent Systems (AutoGen, CrewAI)
 
 ## 当前进度
 
-- **已完成章节**: 14 - SQL 数据库工具
-- **当前学习**: 14 - SQL 数据库工具
-- **下次学习**: 15 - Function Calling 实战
+- **已完成章节**: 16 - Agent Memory
+- **当前学习**: 17 - Agent 错误处理
+- **下次学习**: 17 - Agent 错误处理
 
 ---
 
