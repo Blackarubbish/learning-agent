@@ -36,7 +36,7 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 | 14 | SQL & 数据库工具 | ✅ | 2026-05-13 |
 | 15 | Function Calling 实战 | ✅ | 2026-05-15 |
 | 16 | Agent Memory | ✅ | 2026-05-16 |
-| 17 | Agent 错误处理 | 📌 待学习 | - |
+| 17 | Agent 错误处理 | ✅ | 2026-05-16 |
 | 18 | 周度总结与 Agent 项目 | 📌 待学习 | - |
 
 ---
@@ -106,6 +106,11 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 | 我能从零实现双层记忆 Agent（短期缓冲+长期向量存储） | 4 | 独立完成 ShortTermMemory + LongTermMemory + MemoryAgent |
 | 我能解释短期记忆和长期记忆在存储介质、检索方式、数据形态上的区别 | 4 | 能清晰对比内存全文 vs 向量语义检索 |
 | 我能解释定期批量提取（而非每轮提取）的设计取舍 | 4 | 理解 token 成本、性能、信息冗余的权衡 |
+| 我能从零实现带错误分类的 ResilientAgent | 4 | 独立完成了三分类+反射循环+降级策略 |
+| 我能解释为什么错误分三类而非二类 | 4 | 理解 PARAMETER_ERROR 让 LLM 从"盲目重试"变成"检查参数再试" |
+| 我能解释错误累积对长任务成功率的影响 | 5 | 理解 95%→36% 的指数衰减，能讲清楚反射如何阻断这个衰减 |
+| 我能设计结构化错误反馈（分类+摘要+修复建议） | 4 | 独立实现了 classify_error + _format_error_feedback |
+| 我能解释降级阈值和重试次数的区别 | 4 | 理解连续失败触发降级（防死循环），总重试控制 token 成本 |
 
 ---
 
@@ -122,7 +127,7 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 ```
 Week 1: FastAPI + LangChain + Naive RAG              ✅ 已完成
 Week 2: Advanced RAG + Milvus                        ✅ 已完成 (06-11)
-Week 3: Agent Development & Tool Calling          🔄 进行中 (12/18)
+Week 3: Agent Development & Tool Calling          🔄 进行中 (17/18)
 Week 4: Performance Optimization (Redis, Async, vLLM)
 Week 5: Monitoring & Deployment (Docker, Prometheus)
 Week 6: Multi-Agent Systems (AutoGen, CrewAI)
@@ -130,9 +135,9 @@ Week 6: Multi-Agent Systems (AutoGen, CrewAI)
 
 ## 当前进度
 
-- **已完成章节**: 16 - Agent Memory
-- **当前学习**: 17 - Agent 错误处理
-- **下次学习**: 17 - Agent 错误处理
+- **已完成章节**: 17 - Agent 错误处理
+- **当前学习**: 18 - 周度总结与 Agent 项目
+- **下次学习**: 18 - 周度总结与 Agent 项目
 
 ---
 

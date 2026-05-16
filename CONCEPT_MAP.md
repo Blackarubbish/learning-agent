@@ -66,11 +66,23 @@ graph TD
         StatusFeedback[状态反馈<br/>进度/部分失败]
         ErrorRecovery[错误恢复接口<br/>原因+方案+示例]
         AgentMemory[Agent Memory<br/>对话历史/上下文管理]
+        ErrorClass[错误三分类<br/>RETRYABLE/PARAMETER_ERROR/PERMANENT]
+        StructFeedback[结构化错误反馈<br/>分类+摘要+修复建议]
+        Reflection[Reflection 反射循环<br/>失败→反馈→修正→重试]
+        Degradation[降级策略<br/>连续失败→转交人类]
         ReAct --> Tools
         Tools --> LLM
         Tools -->|质量属性| InfoAbstraction
         Tools -->|质量属性| StatusFeedback
         Tools -->|质量属性| ErrorRecovery
+        Tools -->|失败时触发| ErrorClass
+        ErrorClass -->|生成| StructFeedback
+        StructFeedback -->|压缩上下文| InfoAbstraction
+        StructFeedback -->|驱动| Reflection
+        Reflection -->|增强 Observation| ReAct
+        ErrorClass -->|系统化升级| ErrorRecovery
+        Degradation -->|安全阀| Reflection
+        Degradation -->|进阶: Reflexion| AgentMemory
         SQLAgent[SQL Agent<br/>db_schema + db_query]
         SchemaExplore[Schema 探索<br/>先查目录再翻书]
         SQLSafety[SQL 安全校验<br/>只读围栏]
@@ -110,6 +122,13 @@ graph TD
 | 13 | 错误恢复接口 | Tools → LLM | 错误信息包含"原因+可用选项+正确示例"，让 LLM 自主修正而非盲猜 |
 | 14 | Schema 探索 | Tools + 信息抽象 | Agent 先查目录再翻书——了解表结构后识别相关字段生成精确 SQL，避免 SELECT * 上下文爆炸 |
 | 14 | SQL 安全校验 | Tools + 错误恢复 | \b 独立单词匹配拦截写操作，防止 Agent 幻觉导致数据篡改/删除等不可逆灾难 |
+| 15 | Function Calling JSON Schema | ReAct + Tools | FC 把 ReAct 的工具定义从文本描述升级为 JSON Schema，解析可靠性从 ~80% 提升到 ~99%，还支持并行调用 |
+| 16 | 短期记忆 (ShortTermMemory) | ReAct + AgentMemory | 内存全文缓冲区保存当前会话的完整交互历史，超出窗口则截断最早的消息 |
+| 16 | 长期记忆 (LongTermMemory) | AgentMemory + FAISS | 向量存储保存用户偏好和关键决策，跨会话持久化，语义检索而非全文匹配 |
+| 17 | 错误三分类 | 13章 错误恢复接口 | 把工具返回的错误信息升级为系统化三分类，让 LLM 的行为从"再试一次"变成"检查参数再试"或"立即放弃" |
+| 17 | Reflection 反射循环 | 12章 ReAct | 反射是 ReAct Observation 环节的增强——失败时不只是返回错误，还附加分类+修复建议，让 LLM 自主修正 |
+| 17 | 结构化错误反馈 (Compact Errors) | 13章 信息抽象 | 和工具输出截断同理：错误信息只给分类+摘要+修复建议，不堆栈追踪，按 12-Factor Agent 原则 9 压缩到上下文窗口 |
+| 17 | 降级策略 | 16章 AgentMemory + Reflection | 连续失败触发降级防止死循环；Reflexion 是进阶版——把失败经验写入长期记忆跨会话避免重复犯错 |
 
 <!-- 继续往下写... -->
 
@@ -118,5 +137,11 @@ graph TD
 ## 核心流程一句话总结
 
 ```
+RAG 管线:
 用户问题 → [查询变换优化] → [多路检索(BM25+向量)] → [RRF融合] → [Rerank精排] → [LLM生成] → [评估验证]
                 ↑__________________检索增强__________________↑
+
+Agent 工具调用闭环:
+用户任务 → [ReAct 思考] → [工具调用] → [成功→Observation | 失败→错误分类→结构化反馈→Reflection 修正→重试]
+                              ↑__连续失败→降级(转交人类)__↑
+```
