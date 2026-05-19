@@ -1,6 +1,6 @@
 # 18 - 周度总结与 Agent 项目实战
 
-> 📌 待创建 practice 材料
+> ✅ practice 材料已创建（starter.py + solution.py）
 
 ## 目标
 

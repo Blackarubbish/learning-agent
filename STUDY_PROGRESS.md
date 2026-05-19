@@ -37,7 +37,7 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 | 15 | Function Calling 实战 | ✅ | 2026-05-15 |
 | 16 | Agent Memory | ✅ | 2026-05-16 |
 | 17 | Agent 错误处理 | ✅ | 2026-05-16 |
-| 18 | 周度总结与 Agent 项目 | 📌 待学习 | - |
+| 18 | 周度总结与 Agent 项目 | ✅ | 2026-05-19 |
 
 ---
 
@@ -111,6 +111,9 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 | 我能解释错误累积对长任务成功率的影响 | 5 | 理解 95%→36% 的指数衰减，能讲清楚反射如何阻断这个衰减 |
 | 我能设计结构化错误反馈（分类+摘要+修复建议） | 4 | 独立实现了 classify_error + _format_error_feedback |
 | 我能解释降级阈值和重试次数的区别 | 4 | 理解连续失败触发降级（防死循环），总重试控制 token 成本 |
+| 我能从零集成 FC 循环+工具工程+双层记忆+错误反射到一个 Agent | 4 | 独立完成 ResearchAssistant，9/9 断言通过 |
+| 我能解释记忆在 Agent 中的价值（不只是上下文管理） | 4 | 理解短期缓冲 vs 长期偏好存储，场景 3 验证了跨轮回忆 |
+| 我能解释 Agent 集成中各模块的职责边界 | 4 | FC 循环=决策框架，工具工程=可靠性，记忆=体验，反射=安全网 |
 
 ---
 
@@ -127,7 +130,7 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 ```
 Week 1: FastAPI + LangChain + Naive RAG              ✅ 已完成
 Week 2: Advanced RAG + Milvus                        ✅ 已完成 (06-11)
-Week 3: Agent Development & Tool Calling          🔄 进行中 (17/18)
+Week 3: Agent Development & Tool Calling          🔄 进行中 (12/18)
 Week 4: Performance Optimization (Redis, Async, vLLM)
 Week 5: Monitoring & Deployment (Docker, Prometheus)
 Week 6: Multi-Agent Systems (AutoGen, CrewAI)
