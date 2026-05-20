@@ -39,6 +39,17 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 | 17 | Agent 错误处理 | ✅ | 2026-05-16 |
 | 18 | 周度总结与 Agent 项目 | ✅ | 2026-05-19 |
 
+### 第四阶段：系统性能优化
+
+| 序号 | 主题 | 状态 | 完成日期 |
+|------|------|------|---------|
+| 19 | 性能瓶颈分析 | 📌 待学习 | - |
+| 20 | 缓存优化 (Redis) | 📌 待学习 | - |
+| 21 | 异步处理 (Async) | 📌 待学习 | - |
+| 22 | 批处理优化 | 📌 待学习 | - |
+| 23 | 高性能推理 (vLLM) | 📌 待学习 | - |
+| 24 | 周度总结与性能压测 | 📌 待学习 | - |
+
 ---
 
 ## 能力自评
@@ -130,17 +141,17 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 ```
 Week 1: FastAPI + LangChain + Naive RAG              ✅ 已完成
 Week 2: Advanced RAG + Milvus                        ✅ 已完成 (06-11)
-Week 3: Agent Development & Tool Calling          🔄 进行中 (12/18)
-Week 4: Performance Optimization (Redis, Async, vLLM)
+Week 3: Agent Development & Tool Calling          ✅ 已完成 (12-18)
+Week 4: Performance Optimization (Redis, Async, vLLM) 🔄 进行中 (19/24)
 Week 5: Monitoring & Deployment (Docker, Prometheus)
 Week 6: Multi-Agent Systems (AutoGen, CrewAI)
 ```
 
 ## 当前进度
 
-- **已完成章节**: 17 - Agent 错误处理
-- **当前学习**: 18 - 周度总结与 Agent 项目
-- **下次学习**: 18 - 周度总结与 Agent 项目
+- **已完成章节**: 18 - 周度总结与 Agent 项目
+- **当前学习**: 19 - 性能瓶颈分析
+- **下次学习**: 19 - 性能瓶颈分析
 
 ---
 
@@ -182,6 +193,13 @@ agent-study/
         ├── 16-agent-memory/
         ├── 17-error-handling/
         └── 18-weekly-summary/
+    └── stage4-performance/
+        ├── 19-profiling/
+        ├── 20-redis-cache/
+        ├── 21-async/
+        ├── 22-batch/
+        ├── 23-vllm/
+        └── 24-weekly-summary/
 ```
 
 ---
