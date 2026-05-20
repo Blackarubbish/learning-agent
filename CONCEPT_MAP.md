@@ -92,6 +92,15 @@ graph TD
         SQLAgent -->|包含| SchemaExplore
         SQLAgent -->|包含| SQLSafety
         AgentMemory --> ReAct
+        FC[Function Calling<br/>JSON Schema + bind_tools]
+        ReAct -->|工程化升级| FC
+        FC -->|工具定义| Tools
+        ResearchAssistant[研究助手 Agent<br/>FC 循环 + 工具工程 + 双层记忆 + 错误反射]
+        FC -->|决策引擎| ResearchAssistant
+        Tools -->|工具质量| ResearchAssistant
+        AgentMemory -->|上下文注入| ResearchAssistant
+        Reflection -->|错误修正闭环| ResearchAssistant
+        Degradation -->|安全阀| ResearchAssistant
     end
 
     %% ====== 样式 ======
@@ -101,6 +110,8 @@ graph TD
     style Ragas fill:#fbb,stroke:#333,stroke-width:2px
     style ReAct fill:#fcf,stroke:#333,stroke-width:3px
     style Tools fill:#ff9,stroke:#333,stroke-width:3px
+    style FC fill:#ddf,stroke:#333,stroke-width:3px
+    style ResearchAssistant fill:#ff9,stroke:#f00,stroke-width:4px
 ```
 
 ---
@@ -129,6 +140,9 @@ graph TD
 | 17 | Reflection 反射循环 | 12章 ReAct | 反射是 ReAct Observation 环节的增强——失败时不只是返回错误，还附加分类+修复建议，让 LLM 自主修正 |
 | 17 | 结构化错误反馈 (Compact Errors) | 13章 信息抽象 | 和工具输出截断同理：错误信息只给分类+摘要+修复建议，不堆栈追踪，按 12-Factor Agent 原则 9 压缩到上下文窗口 |
 | 17 | 降级策略 | 16章 AgentMemory + Reflection | 连续失败触发降级防止死循环；Reflexion 是进阶版——把失败经验写入长期记忆跨会话避免重复犯错 |
+| 18 | ResearchAssistant 集成 | FC + Tools + AgentMemory + Reflection + Degradation | 四大模块形成完整能力闭环：FC循环=决策框架，工具工程=可靠性，记忆=体验，反射=安全网 |
+| 18 | Agent 模块职责边界 | 13章工具工程 + 16章记忆 + 17章错误处理 | 各模块有清晰的职责边界：工具保证单次调用成功率，记忆消除重复声明摩擦，反射阻断错误累积衰减 |
+| 18 | 错误分类权威来源 | 17章错误三分类 + 13章错误恢复接口 | 工具的 category 是唯一权威来源；classify_error 只用于意外异常的分类兜底，避免两个分类系统冲突 |
 
 <!-- 继续往下写... -->
 
@@ -144,4 +158,9 @@ RAG 管线:
 Agent 工具调用闭环:
 用户任务 → [ReAct 思考] → [工具调用] → [成功→Observation | 失败→错误分类→结构化反馈→Reflection 修正→重试]
                               ↑__连续失败→降级(转交人类)__↑
+
+ResearchAssistant 集成闭环:
+用户输入 → [长期记忆检索(偏好)] → [短期记忆注入(历史)] → [FC 循环(bind_tools)] 
+    → [工具执行(信息抽象+状态反馈)] → [失败→工具分类(权威)→反馈→重试/降级]
+    → 最终答案 → [更新短期记忆]
 ```
