@@ -43,8 +43,8 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 
 | 序号 | 主题 | 状态 | 完成日期 |
 |------|------|------|---------|
-| 19 | 性能瓶颈分析 | 📌 待学习 | - |
-| 20 | 缓存优化 (Redis) | 📌 待学习 | - |
+| 19 | 性能瓶颈分析 | ✅ | 2026-05-24 |
+| 20 | 缓存优化 (Redis) | ✅ | 2026-05-24 |
 | 21 | 异步处理 (Async) | 📌 待学习 | - |
 | 22 | 批处理优化 | 📌 待学习 | - |
 | 23 | 高性能推理 (vLLM) | 📌 待学习 | - |
@@ -126,6 +126,17 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 | 我能解释记忆在 Agent 中的价值（不只是上下文管理） | 4 | 理解短期缓冲 vs 长期偏好存储，场景 3 验证了跨轮回忆 |
 | 我能解释 Agent 集成中各模块的职责边界 | 4 | FC 循环=决策框架，工具工程=可靠性，记忆=体验，反射=安全网 |
 
+### 性能分析
+
+| 能力维度 | 自评 | 证据 |
+|---------|------|------|
+| 我能用 cProfile + pstats 定位 Agent 系统的性能瓶颈 | 4 | 独立完成 profile_run + compare_sorts + run_experiments |
+| 我能解释 cumtime 和 tottime 的区别及各自用途 | 4 | cumtime 找时间黑洞（网络 I/O），tottime 找代码热点（CPU 密集） |
+| 我能用 print_callers 追踪慢函数的调用链 | 3 | 理解了调用链分析，TODO 4 未独立完成 |
+| 我能从零实现 Cache-Aside 模式（查缓存→miss→调LLM→写缓存） | 4 | 独立完成 cached_llm_invoke，两轮 benchmark 验证 |
+| 我能解释精确缓存和语义缓存的区别及适用场景 | 4 | 精确缓存用 SHA256 做 key，语义缓存用 embedding 相似度匹配 |
+| 我能用 fakeredis 做本地缓存开发测试 | 4 | 独立完成 ExactMatchCache + SemanticCache 集成 |
+
 ---
 
 ## 薄弱点追踪
@@ -149,9 +160,9 @@ Week 6: Multi-Agent Systems (AutoGen, CrewAI)
 
 ## 当前进度
 
-- **已完成章节**: 18 - 周度总结与 Agent 项目
-- **当前学习**: 19 - 性能瓶颈分析
-- **下次学习**: 19 - 性能瓶颈分析
+- **已完成章节**: 20 - 缓存优化 (Redis)
+- **当前学习**: 21 - 异步处理 (Async)
+- **下次学习**: 21 - 异步处理 (Async)
 
 ---
 
@@ -173,12 +184,14 @@ agent-study/
 ├── pyproject.toml
 └── learning/
     ├── stage1-rag-basics/
+    │   ├── mindmap.md        # Stage 1 思维导图
     │   ├── 01-fastapi/
     │   ├── 02-langchain/
     │   ├── 03-rag-part1/
     │   ├── 04-rag-part2/
     │   └── 05-naive-rag/
     └── stage2-advanced-rag/
+        ├── mindmap.md        # Stage 2 思维导图
         ├── 06-query-transformation/
         ├── 07-hybrid-retriever-rerank/
         ├── 08-rag-evaluation/
@@ -186,6 +199,7 @@ agent-study/
         ├── 10-advanced-data-processing/
         └── 11-weekly-summary/
     └── stage3-agent-development/
+        ├── mindmap.md        # Stage 3 思维导图
         ├── 12-agent-basics/
         ├── 13-custom-tools/
         ├── 14-sql-agent/
@@ -194,6 +208,7 @@ agent-study/
         ├── 17-error-handling/
         └── 18-weekly-summary/
     └── stage4-performance/
+        ├── mindmap.md        # Stage 4 思维导图
         ├── 19-profiling/
         ├── 20-redis-cache/
         ├── 21-async/

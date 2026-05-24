@@ -150,6 +150,45 @@ vectorstore = FAISS.from_documents(docs, embeddings)
 
 ---
 
+## 5.5 思维导图规则
+
+每个阶段目录下有一张 `mindmap.md`，用 Mermaid `mindmap` 语法记录该阶段的知识结构：
+
+```
+learning/
+├── stage1-rag-basics/mindmap.md
+├── stage2-advanced-rag/mindmap.md
+├── stage3-agent-development/mindmap.md
+└── stage4-performance/mindmap.md
+```
+
+### 思维导图 vs CONCEPT_MAP.md
+
+| 维度 | CONCEPT_MAP.md | mindmap.md |
+|------|---------------|------------|
+| 图表类型 | `graph TD`（节点+连线） | `mindmap`（放射性层级树） |
+| 侧重 | 概念之间的**关联关系** | 知识的**层级展开** |
+| 适合场景 | 理解模块间依赖和流向 | 复习知识点、构建知识树 |
+
+两者互补：CONCEPT_MAP 回答"这个概念和哪个概念相关"，mindmap 回答"这个阶段学了哪些东西、每章的核心要点是什么"。
+
+### 维护规则
+
+1. **每完成一个章节**：在该阶段的 mindmap.md 中更新对应章节分支（标记 ✅、补充核心概念）
+2. **每完成一个阶段**：检查整张思维导图的层级结构是否合理
+3. **用户说"复习 XX 阶段"**：先展示该阶段的 mindmap，帮用户建立全局视角，再深入具体章节
+
+### 格式约定
+
+- 使用 Mermaid `mindmap` 语法（非 `graph TD`）
+- 中心节点：阶段主题
+- 一级分支：章节编号+名称
+- 二级分支：核心概念/关键 API/设计原则
+- 三级分支：具体细节/对比/实践要点
+- 已完成章节标注 ✅，未完成标注 📌
+
+---
+
 ## 6. Agent 交互风格
 
 ### 6.0 角色定位

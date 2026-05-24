@@ -28,3 +28,6 @@ AgentGuide/
 # Runtime files
 server.log
 uploads/
+
+# Markmap generated HTML (regenerate with: npx markmap-cli)
+learning/**/mindmap.html

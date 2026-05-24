@@ -28,10 +28,13 @@ def get_or_create_llm(
         if provider == "deepseek":
             api_key = require_env("DEEPSEEK_API_KEY")
             llm = ChatOpenAI(
-                model="deepseek-chat",
+                model="deepseek-v4-flash",
                 base_url="https://api.deepseek.com",
                 api_key=api_key,
                 temperature=temperature,
+                extra_body={
+                    "thinking": {"type": "disabled"},  # 关闭模型思考过程输出，减少 token 消耗
+                },
             )
         elif provider == "zhipu":
             api_key = require_env("ZHIPU_API_KEY")

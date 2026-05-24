@@ -103,6 +103,33 @@ graph TD
         Degradation -->|安全阀| ResearchAssistant
     end
 
+    %% ====== 性能分析层 ======
+    subgraph 性能优化
+        cProfile[cProfile<br/>函数级性能采样]
+        pstats[pstats<br/>统计数据解析]
+        Cumtime[cumtime 累计耗时<br/>含子调用,找时间黑洞]
+        Tottime[tottime 自身耗时<br/>不含子调用,找代码热点]
+        Callers[print_callers<br/>调用链追踪]
+        cProfile --> pstats
+        pstats --> Cumtime
+        pstats --> Tottime
+        pstats --> Callers
+        cProfile -->|测量| ResearchAssistant
+    end
+
+    %% ====== 缓存层 ======
+    subgraph 缓存优化
+        ExactCache[精确缓存<br/>SHA256 hash key]
+        SemanticCache[语义缓存<br/>Embedding 相似度]
+        TTL[TTL 过期时间<br/>平衡命中率与新鲜度]
+        CacheAside[Cache-Aside 模式<br/>查缓存→调LLM→写缓存]
+        ExactCache -->|完全相同才命中| CacheAside
+        SemanticCache -->|意思相近即可命中| CacheAside
+        TTL -->|设置过期时间| ExactCache
+        TTL -->|设置过期时间| SemanticCache
+        CacheAside -->|包裹| LLM
+    end
+
     %% ====== 样式 ======
     style RAG fill:#f9f,stroke:#333,stroke-width:4px
     style RRF fill:#bbf,stroke:#333,stroke-width:2px
@@ -112,6 +139,11 @@ graph TD
     style Tools fill:#ff9,stroke:#333,stroke-width:3px
     style FC fill:#ddf,stroke:#333,stroke-width:3px
     style ResearchAssistant fill:#ff9,stroke:#f00,stroke-width:4px
+    style cProfile fill:#ddf,stroke:#333,stroke-width:3px
+    style Cumtime fill:#bbf,stroke:#333,stroke-width:2px
+    style Tottime fill:#bfb,stroke:#333,stroke-width:2px
+    style ExactCache fill:#bbf,stroke:#333,stroke-width:2px
+    style SemanticCache fill:#bfb,stroke:#333,stroke-width:2px
 ```
 
 ---
@@ -143,6 +175,9 @@ graph TD
 | 18 | ResearchAssistant 集成 | FC + Tools + AgentMemory + Reflection + Degradation | 四大模块形成完整能力闭环：FC循环=决策框架，工具工程=可靠性，记忆=体验，反射=安全网 |
 | 18 | Agent 模块职责边界 | 13章工具工程 + 16章记忆 + 17章错误处理 | 各模块有清晰的职责边界：工具保证单次调用成功率，记忆消除重复声明摩擦，反射阻断错误累积衰减 |
 | 18 | 错误分类权威来源 | 17章错误三分类 + 13章错误恢复接口 | 工具的 category 是唯一权威来源；classify_error 只用于意外异常的分类兜底，避免两个分类系统冲突 |
+| 19 | cProfile + pstats | ResearchAssistant + LLM + httpx | cProfile 对 Agent.run() 做函数级采样；cumtime 定位网络 I/O 时间黑洞（LLM API 调用占 90%+），tottime 定位 CPU 热点；print_callers 追踪慢函数调用链 |
+| 20 | 精确缓存 (ExactMatchCache) | 19章性能瓶颈 + LLM + fakeredis | SHA256(prompt) 做 key，字符级完全相同才命中；第二轮 benchmark 0.0s 证明缓存消除了 LLM API 瓶颈 |
+| 20 | 语义缓存 (SemanticCache) | 精确缓存 + Embedding + FAISS | 用 embedding 余弦相似度匹配"意思相近"的查询；threshold 控制命中范围和准确度，解决同义改写穿透精确缓存的问题 |
 
 <!-- 继续往下写... -->
 
