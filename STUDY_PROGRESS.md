@@ -45,7 +45,7 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 |------|------|------|---------|
 | 19 | 性能瓶颈分析 | ✅ | 2026-05-24 |
 | 20 | 缓存优化 (Redis) | ✅ | 2026-05-24 |
-| 21 | 异步处理 (Async) | 📌 待学习 | - |
+| 21 | 异步处理 (Async) | ✅ | 2026-06-03 |
 | 22 | 批处理优化 | 📌 待学习 | - |
 | 23 | 高性能推理 (vLLM) | 📌 待学习 | - |
 | 24 | 周度总结与性能压测 | 📌 待学习 | - |
@@ -136,6 +136,10 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 | 我能从零实现 Cache-Aside 模式（查缓存→miss→调LLM→写缓存） | 4 | 独立完成 cached_llm_invoke，两轮 benchmark 验证 |
 | 我能解释精确缓存和语义缓存的区别及适用场景 | 4 | 精确缓存用 SHA256 做 key，语义缓存用 embedding 相似度匹配 |
 | 我能用 fakeredis 做本地缓存开发测试 | 4 | 独立完成 ExactMatchCache + SemanticCache 集成 |
+| 我能将同步 Agent 改造为异步（llm.ainvoke + asimilarity_search） | 4 | 独立完成 AsyncAgent，10/10 断言通过 |
+| 我能解释 asyncio 事件循环如何让 I/O 等待时间重叠 | 4 | 用自己的话解释了 40s→14s 的加速原理，餐厅服务员类比 |
+| 我能用 asyncio.gather 并发执行多个 Agent 查询 | 4 | 独立完成了 benchmark，5 并发加速比 2.8x |
+| 我能解释异步不加速单任务的原理 | 5 | 能讲清楚 await 是"挂起让路"而非"阻塞等待"，单协程无切换则无加速 |
 
 ---
 
@@ -160,9 +164,9 @@ Week 6: Multi-Agent Systems (AutoGen, CrewAI)
 
 ## 当前进度
 
-- **已完成章节**: 20 - 缓存优化 (Redis)
-- **当前学习**: 21 - 异步处理 (Async)
-- **下次学习**: 21 - 异步处理 (Async)
+- **已完成章节**: 21 - 异步处理 (Async)
+- **当前学习**: 22 - 批处理优化
+- **下次学习**: 22 - 批处理优化
 
 ---
 

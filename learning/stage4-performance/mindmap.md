@@ -39,24 +39,20 @@
 - AIMessage 不能直接存 Redis, 需转 str
 - 精确缓存消除 LLM API 瓶颈, 语义缓存进一步覆盖同义改写
 
-## 21 异步处理 Async 📌
+## 21 异步处理 Async ✅
 ### 核心概念
 - asyncio: Python原生异步, 单线程事件循环
-- aiohttp: 异步HTTP客户端
+- await: 挂起协程让出CPU, 非阻塞等待
 - I/O密集用async, CPU密集用线程池
 ### 关键 API
 - llm.ainvoke: 异步LLM调用
+- httpx.AsyncClient: 异步HTTP客户端
 - vectorstore.asimilarity_search: 异步检索
 - asyncio.gather: 并发执行多个协程
-### 实验设计
-- 改造ResearchAssistant.run()为async
-- 并发5/10/20个查询
-- 对比同步和异步完成时间
-- 加速比 = 同步总时间 / 异步总时间
-### 预期效果
-- 并发场景加速比接近并发数
-- 单次查询无显著差异
-- 异步不加速单任务, 只提升并发吞吐
+### 实验结论
+- 5并发查询: 同步40.64s → 异步14.61s, 加速比2.8x
+- await 是"挂起让路"而非"阻塞等待"
+- 异步不加速单任务, 只让多任务I/O等待时间重叠
 
 ## 22 批处理优化 📌
 ### 核心概念

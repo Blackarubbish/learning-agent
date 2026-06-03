@@ -128,6 +128,22 @@ graph TD
         TTL -->|设置过期时间| ExactCache
         TTL -->|设置过期时间| SemanticCache
         CacheAside -->|包裹| LLM
+        %% 异步连接
+        cProfile -->|I/O 瓶颈驱动| AsyncIO
+        ExactCache -->|消除重复 I/O| AsyncIO
+        SemanticCache -->|消除重复 I/O| AsyncIO
+        FC -->|ainvoke 替代 invoke| Ainvoke
+    end
+
+    %% ====== 异步处理层 ======
+    subgraph 异步处理
+        AsyncIO[asyncio 事件循环<br/>单线程协作式调度]
+        Ainvoke[llm.ainvoke<br/>异步 LLM 调用]
+        AsyncSearch[asimilarity_search<br/>异步向量检索]
+        Gather[asyncio.gather<br/>并发执行协程]
+        AsyncIO -->|调度| Ainvoke
+        AsyncIO -->|调度| AsyncSearch
+        AsyncIO -->|批量并发| Gather
     end
 
     %% ====== 样式 ======
@@ -144,6 +160,9 @@ graph TD
     style Tottime fill:#bfb,stroke:#333,stroke-width:2px
     style ExactCache fill:#bbf,stroke:#333,stroke-width:2px
     style SemanticCache fill:#bfb,stroke:#333,stroke-width:2px
+    style AsyncIO fill:#ff9,stroke:#333,stroke-width:3px
+    style Ainvoke fill:#bbf,stroke:#333,stroke-width:2px
+    style Gather fill:#bfb,stroke:#333,stroke-width:2px
 ```
 
 ---
@@ -178,6 +197,7 @@ graph TD
 | 19 | cProfile + pstats | ResearchAssistant + LLM + httpx | cProfile 对 Agent.run() 做函数级采样；cumtime 定位网络 I/O 时间黑洞（LLM API 调用占 90%+），tottime 定位 CPU 热点；print_callers 追踪慢函数调用链 |
 | 20 | 精确缓存 (ExactMatchCache) | 19章性能瓶颈 + LLM + fakeredis | SHA256(prompt) 做 key，字符级完全相同才命中；第二轮 benchmark 0.0s 证明缓存消除了 LLM API 瓶颈 |
 | 20 | 语义缓存 (SemanticCache) | 精确缓存 + Embedding + FAISS | 用 embedding 余弦相似度匹配"意思相近"的查询；threshold 控制命中范围和准确度，解决同义改写穿透精确缓存的问题 |
+| 21 | asyncio 事件循环 | cProfile + ExactCache + FC | cProfile 发现的 I/O 瓶颈驱动 async 改造；缓存消除重复 I/O，async 让非重复 I/O 等待时间重叠；`llm.ainvoke()` 是 FC 循环的异步升级 |
 
 <!-- 继续往下写... -->
 
@@ -198,4 +218,11 @@ ResearchAssistant 集成闭环:
 用户输入 → [长期记忆检索(偏好)] → [短期记忆注入(历史)] → [FC 循环(bind_tools)] 
     → [工具执行(信息抽象+状态反馈)] → [失败→工具分类(权威)→反馈→重试/降级]
     → 最终答案 → [更新短期记忆]
+
+异步并发加速:
+同步: query1 → 等API → query2 → 等API → ... (串行, Σ耗时)
+异步: query1..N → [同时发请求] → [I/O等待重叠] → [同时收结果] (并发, ≈max耗时)
+    llm.invoke() → await llm.ainvoke()
+    vectorstore.similarity_search() → await vectorstore.asimilarity_search()
+    for q in queries → await asyncio.gather(*tasks)
 ```
