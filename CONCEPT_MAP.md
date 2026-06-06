@@ -146,6 +146,23 @@ graph TD
         AsyncIO -->|批量并发| Gather
     end
 
+    %% ====== 批处理优化层 ======
+    subgraph 批处理优化
+        BatchEmbed[Embedding 批处理<br/>embed_documents 合并请求]
+        LLMBatch[LLM 并发批处理<br/>llm.batch 线程池并发]
+        BatchSize[Batch Size 权衡<br/>吞吐 vs 延迟 vs API 上限]
+        BatchEmbed -->|减少网络往返| BatchSize
+        LLMBatch -->|控制并发度| BatchSize
+    end
+
+    %% ====== 批处理连接 ======
+    EmbeddingModel -->|一次 API 处理 N 条文本| BatchEmbed
+    LLM -->|线程池并发 invoke| LLMBatch
+    AsyncIO -->|互补：合并+重叠| BatchEmbed
+    AsyncIO -->|互补：合并+重叠| LLMBatch
+    ExactCache -->|缓存预热依赖| BatchEmbed
+    SemanticCache -->|缓存预热依赖| BatchEmbed
+
     %% ====== 样式 ======
     style RAG fill:#f9f,stroke:#333,stroke-width:4px
     style RRF fill:#bbf,stroke:#333,stroke-width:2px
@@ -163,6 +180,9 @@ graph TD
     style AsyncIO fill:#ff9,stroke:#333,stroke-width:3px
     style Ainvoke fill:#bbf,stroke:#333,stroke-width:2px
     style Gather fill:#bfb,stroke:#333,stroke-width:2px
+    style BatchEmbed fill:#ff9,stroke:#333,stroke-width:3px
+    style LLMBatch fill:#bbf,stroke:#333,stroke-width:2px
+    style BatchSize fill:#fbb,stroke:#333,stroke-width:2px
 ```
 
 ---
@@ -198,6 +218,7 @@ graph TD
 | 20 | 精确缓存 (ExactMatchCache) | 19章性能瓶颈 + LLM + fakeredis | SHA256(prompt) 做 key，字符级完全相同才命中；第二轮 benchmark 0.0s 证明缓存消除了 LLM API 瓶颈 |
 | 20 | 语义缓存 (SemanticCache) | 精确缓存 + Embedding + FAISS | 用 embedding 余弦相似度匹配"意思相近"的查询；threshold 控制命中范围和准确度，解决同义改写穿透精确缓存的问题 |
 | 21 | asyncio 事件循环 | cProfile + ExactCache + FC | cProfile 发现的 I/O 瓶颈驱动 async 改造；缓存消除重复 I/O，async 让非重复 I/O 等待时间重叠；`llm.ainvoke()` 是 FC 循环的异步升级 |
+| 22 | Embedding 批处理 + LLM 并发批处理 | ch04 EmbeddingModel + ch21 AsyncIO + ch20 缓存预热 | `embed_documents(texts)` 本身就是批处理，从 ch04 就在用，本章量化了收益（30 条 11x 加速）；`llm.batch()` 是框架级并发（线程池），非 API 级合并；批处理和异步互补——合并请求+重叠等待；缓存预热依赖批处理做批量向量化和并发生成
 
 <!-- 继续往下写... -->
 
@@ -225,4 +246,11 @@ ResearchAssistant 集成闭环:
     llm.invoke() → await llm.ainvoke()
     vectorstore.similarity_search() → await vectorstore.asimilarity_search()
     for q in queries → await asyncio.gather(*tasks)
+
+批处理加速:
+逐条: 每条一次 API 请求 → N 次 RTT → Σ耗时 ≈ N×(RTT+计算)
+批量: N 条合并为一次请求 → 1 次 RTT → 耗时 ≈ RTT + N×计算
+    逐条: for t in texts: embeddings.embed_documents([t])  → N 次 API
+    批量: embeddings.embed_documents(texts)              → 1 次 API
+    LLM 并发: llm.batch(prompts) — 线程池并发 invoke, 耗时 ≈ max(单次), 非合并请求
 ```

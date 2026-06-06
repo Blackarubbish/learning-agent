@@ -54,21 +54,21 @@
 - await 是"挂起让路"而非"阻塞等待"
 - 异步不加速单任务, 只让多任务I/O等待时间重叠
 
-## 22 批处理优化 📌
+## 22 批处理优化 ✅
 ### 核心概念
-- 批处理: 一次发送N条数据 vs N次单条
-- batch_size: 越大吞吐越高, 但有API rate limit上限
+- Embedding 批处理: API 级合并, N条文本 → 1次HTTP (真批处理)
+- LLM 并发批处理: 框架级并发, N个prompt → N次HTTP (线程池)
+- batch_size: 越大吞吐越高, 但收益递减, 有API rate limit上限
 ### 关键 API
-- llm.batch: 批量LLM调用
-- embeddings.embed_documents: 批量向量化
-### 实验设计
-- 知识库文档做Embedding批量导入
-- 对比逐个embed vs 批次embed (10/50/100)
-- 记录总耗时/API调用次数/每条均摊耗时
-### 预期效果
-- API调用从N次降到N/batch_size次
-- 网络往返开销减少, 吞吐提升5-20x
-- 需平衡batch_size和API rate limit
+- embeddings.embed_documents(texts): 批量向量化, 1次API处理N条
+- llm.batch(prompts): 线程池并发LLM调用, 耗时≈max(单次)
+- llm.batch(prompts, config={"max_concurrency": 5}): 限制并发度
+- llm.abatch(prompts): 异步版batch, 用asyncio.gather
+### 实验结论
+- 30条Embedding: bs=1 耗时7.7s → bs=30 耗时0.69s, 加速11x
+- LLM batch: 串行42.7s → batch 9.6s, 加速4.5x
+- 收益递减: bs=1→5 省24次RTT(巨大), 5→10省3次(变小), 10→30省2次(边际)
+- 性能差距来自网络往返(RTT), 不是服务端计算速度
 
 ## 23 高性能推理 vLLM 📌
 ### 核心概念
