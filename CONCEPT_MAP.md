@@ -218,9 +218,18 @@ graph TD
 | 20 | 精确缓存 (ExactMatchCache) | 19章性能瓶颈 + LLM + fakeredis | SHA256(prompt) 做 key，字符级完全相同才命中；第二轮 benchmark 0.0s 证明缓存消除了 LLM API 瓶颈 |
 | 20 | 语义缓存 (SemanticCache) | 精确缓存 + Embedding + FAISS | 用 embedding 余弦相似度匹配"意思相近"的查询；threshold 控制命中范围和准确度，解决同义改写穿透精确缓存的问题 |
 | 21 | asyncio 事件循环 | cProfile + ExactCache + FC | cProfile 发现的 I/O 瓶颈驱动 async 改造；缓存消除重复 I/O，async 让非重复 I/O 等待时间重叠；`llm.ainvoke()` 是 FC 循环的异步升级 |
-| 22 | Embedding 批处理 + LLM 并发批处理 | ch04 EmbeddingModel + ch21 AsyncIO + ch20 缓存预热 | `embed_documents(texts)` 本身就是批处理，从 ch04 就在用，本章量化了收益（30 条 11x 加速）；`llm.batch()` 是框架级并发（线程池），非 API 级合并；批处理和异步互补——合并请求+重叠等待；缓存预热依赖批处理做批量向量化和并发生成
-
-<!-- 继续往下写... -->
+| 22 | Embedding 批处理 + LLM 并发批处理 | ch04 EmbeddingModel + ch21 AsyncIO + ch20 缓存预热 | `embed_documents(texts)` 本身就是批处理，从 ch04 就在用，本章量化了收益（30 条 11x 加速）；`llm.batch()` 是框架级并发（线程池），非 API 级合并；批处理和异步互补——合并请求+重叠等待；缓存预热依赖批处理做批量向量化和并发生成 |
+| 23 | PagedAttention | 19章性能瓶颈 + GPU 显存 + 虚拟内存 | PagedAttention 把 OS 分页管理搬进 KV Cache：按需分配 block（每 block 16 token），显存利用率 20%→90%+；同前缀的 KV Cache block 可共享（Copy-on-Write） |
+| 23 | Continuous Batching | 22章 llm.batch + AsyncIO | 以 token 为粒度调度而非请求粒度：每步生成后可重组 batch，GPU 利用率 30%→85%+；和 PagedAttention 正交互补——前者让内存灵活分配以容纳更多请求，后者让 GPU 一直有活干 |
+| 23 | vLLM 自部署 vs API 服务 | ch01 FastAPI + ch04 EmbeddingModel | 自部署：成本可控、延迟低、可控性强，但需要运维 GPU 集群；API 服务：零运维、弹性伸缩，但成本随量增长、受限于 rate limit |
+| 24 | locust 压测 | 19章 Profiling + 20章 缓存 + 21章 异步 | locust 模拟 N 个并发用户压测 API；关键指标 QPS/P50/P99/错误率；优化报告结构：基准数据→优化措施→效果量化→成本分析 |
+| S5 | Docker 容器化 | ch01 FastAPI + 18章 ResearchAssistant | LLM 应用 Docker 化的特殊挑战：镜像体积（PyTorch 百MB级）、启动时间（模型加载分钟级）、健康检查需探测模型状态、有状态（KV Cache/对话历史） |
+| S5 | Prometheus + Grafana 监控 | 20章缓存命中率 + 21章异步 + 22章批处理 | LLM 应用需暴露的自定义指标：Token 消耗（按模型/类型分）、缓存命中率、GPU 利用率、降级次数；成本监控是最大差异——常规服务按 CPU/内存，LLM 按 Token 数计费 |
+| 26 | Swarm Handoff 机制 | 12章 ReAct + 15章 Tool Calling | Handoff 是普通的 tool function，返回值是目标 Agent；框架检测到 Agent 对象时自动切换，不是特殊机制；Routine 模式预设流程减少 LLM 调用 |
+| 26 | Agent 职责单一原则 | 13章 工具工程 + 17章 错误处理 | 每个 Agent 只聚焦一个角色（业务 vs 技术），system prompt 更短更精确；终端 Agent 无 handoff 防止无限转交；和微服务拆分同构 |
+| 27 | AutoGen GroupChat | 26章 Swarm + 15章 FC | RoundRobin 固定轮询 vs Selector LLM 动态选人；终止条件可组合（关键词|轮数）；AgentTool 把 Agent 包装成 Tool 实现递归组合 |
+| 28 | CrewAI 三段式定义 | 16章 Memory + 13章 工具工程 | Agent(role+goal+backstory) → Task(desc+expected_output) → Crew(agents+tasks+process)；YAML 声明式适合生产；Sequential/Hierarchical 两种 Process |
+| 29 | LangGraph StateGraph | 12章 Agent 循环 + 26章 Swarm | 把 while 循环变成声明式状态机：Node=处理函数，ConditionalEdge=路由决策，Checkpoint=断点续跑；原生支持 HITL/streaming/并行，生产环境首选 |
 
 ---
 
@@ -252,5 +261,23 @@ ResearchAssistant 集成闭环:
 批量: N 条合并为一次请求 → 1 次 RTT → 耗时 ≈ RTT + N×计算
     逐条: for t in texts: embeddings.embed_documents([t])  → N 次 API
     批量: embeddings.embed_documents(texts)              → 1 次 API
-    LLM 并发: llm.batch(prompts) — 线程池并发 invoke, 耗时 ≈ max(单次), 非合并请求
+    vLLM 服务增强:
+用户请求 → [OpenAI 兼容 API] → [PagedAttention 分页管理 KV Cache] → [Continuous Batching 动态调度 Batch] → GPU 推理 → 响应
+            ↑__自部署: 成本可控、低延迟、需运维 GPU__↑  vs  ↑__API 服务: 零运维、弹性伸缩、受限于 rate limit__↑
+
+监控与部署流水线:
+代码 → [Docker 多阶段构建] → [容器化部署 K8s/Docker Compose] → [Prometheus 采集 /metrics] → [Grafana 可视化 Dashboard]
+                                                                    ├── llm_requests_total (QPS)
+                                                                    ├── llm_latency_seconds (P50/P95/P99)
+                                                                    ├── llm_tokens_total (成本)
+                                                                    └── cache_hit_rate (优化效果)
+
+多 Agent 协作流程:
+用户任务 → [Crew/GroupChat 编排]
+              ├→ Agent A (研究员): 搜索资料 [Tool: web_search]
+              ├→ Agent B (分析师): 提炼观点 [Tool: summarize]
+              ├→ Agent C (写手):   撰写报告 [Tool: none]
+              └→ Agent D (审核):   事实校验 [Tool: verify]
+          → 最终输出（经过多角色 review）
+               ↑__顺序接力 sequential__↑  vs  ↑__自由讨论 groupchat__↑  vs  ↑__层级委托 hierarchical__↑
 ```

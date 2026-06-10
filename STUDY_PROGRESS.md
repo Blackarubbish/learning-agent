@@ -39,7 +39,7 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 | 17 | Agent 错误处理 | ✅ | 2026-05-16 |
 | 18 | 周度总结与 Agent 项目 | ✅ | 2026-05-19 |
 
-### 第四阶段：系统性能优化
+### 第四阶段：系统性能优化 ✅ 已完成
 
 | 序号 | 主题 | 状态 | 完成日期 |
 |------|------|------|---------|
@@ -47,8 +47,24 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 | 20 | 缓存优化 (Redis) | ✅ | 2026-05-24 |
 | 21 | 异步处理 (Async) | ✅ | 2026-06-03 |
 | 22 | 批处理优化 | ✅ | 2026-06-06 |
-| 23 | 高性能推理 (vLLM) | 📌 待学习 | - |
-| 24 | 周度总结与性能压测 | 📌 待学习 | - |
+| 23 | 高性能推理 (vLLM) | ✅ 概念掌握 | 2026-06-08 |
+| 24 | 周度总结与性能压测 | ✅ 跳过（已有 Node.js 压测经验） | 2026-06-08 |
+
+### 第五阶段：监控与部署
+
+| 序号 | 主题 | 状态 | 完成日期 |
+|------|------|------|---------|
+| 25 | Docker + Prometheus + Grafana | ✅ 自学完成 | 2026-06-08 |
+
+### 第六阶段：多 Agent 系统
+
+| 序号 | 主题 | 状态 | 完成日期 |
+|------|------|------|---------|
+| 26 | Swarm — Multi-Agent 基础原理 | ✅ 完成 | 2026-06-10 |
+| 27 | AutoGen — 多 Agent 对话协作 | 📌 待学习 | - |
+| 28 | CrewAI — 角色驱动的任务协作 | 📌 待学习 | - |
+| 29 | LangGraph — 生产级 Agent 工作流 | 📌 待学习 | - |
+| 30 | 实战项目 + 框架对比 | 📌 待学习 | - |
 
 ---
 
@@ -150,6 +166,16 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 | 我能解释 batch_size 收益递减的原因 | 4 | 独立完成 find_best_batch_size，观察到 1→5 收益远大于 10→30 |
 | 我能用 llm.batch() 替代串行 for 循环 | 4 | 独立完成 benchmark_llm_batch，加速比 4.5x |
 
+### 多 Agent 系统
+
+| 能力维度 | 自评 | 证据 |
+|---------|------|------|
+| 我能从零实现 Swarm 风格 Handoff 机制 | 4 | 独立完成 Agent 类 + Swarm.run() 循环，19/19 断言通过 |
+| 我能解释 Handoff 为什么是普通 tool 而非框架特殊机制 | 4 | 理解 isinstance(result, Agent) 检测替代特殊 API |
+| 我能解释 Handoff 后上下文如何传递 | 4 | 理解 history list 共享不重置，切换只在 current_agent 变量 |
+| 我能区分终端 Agent 和中间 Agent 的设计差异 | 4 | 终端 Agent 不设 handoff 防止无限转交 |
+| 我能解释 Routine 模式对减少 LLM 调用的价值 | 3 | 理解预设流程 vs LLM 自主路由的 token 成本差异
+
 ---
 
 ## 薄弱点追踪
@@ -166,16 +192,16 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 Week 1: FastAPI + LangChain + Naive RAG              ✅ 已完成
 Week 2: Advanced RAG + Milvus                        ✅ 已完成 (06-11)
 Week 3: Agent Development & Tool Calling          ✅ 已完成 (12-18)
-Week 4: Performance Optimization (Redis, Async, vLLM) 🔄 进行中 (19/24)
-Week 5: Monitoring & Deployment (Docker, Prometheus)
-Week 6: Multi-Agent Systems (AutoGen, CrewAI)
+Week 4: Performance Optimization (Redis, Async, vLLM) ✅ 已完成 (19/24)
+Week 5: Monitoring & Deployment (Docker, Prometheus)       ✅ 已完成
+Week 6: Multi-Agent Systems (AutoGen, CrewAI)               🔄 进行中
 ```
 
 ## 当前进度
 
-- **已完成章节**: 22 - 批处理优化 (Batching)
-- **当前学习**: 23 - 高性能推理 (vLLM)
-- **下次学习**: 23 - 高性能推理 (vLLM)
+- **已完成章节**: 25 — Stage 5 自学完成
+- **当前学习**: Stage 6 — 多 Agent 系统（AutoGen, CrewAI）
+- **下次学习**: 27 — AutoGen 多 Agent 对话协作
 
 ---
 
@@ -228,6 +254,17 @@ agent-study/
         ├── 22-batch/
         ├── 23-vllm/
         └── 24-weekly-summary/
+    └── stage5-monitoring-deployment/
+        ├── README.md         # Stage 5 学习资料（自学）
+        └── mindmap.md        # Stage 5 思维导图
+    └── stage6-multi-agent/
+        ├── README.md         # Stage 6 总览
+        ├── mindmap.md        # Stage 6 思维导图
+        ├── 26-swarm/         # Swarm 极简入门
+        ├── 27-autogen/       # AutoGen 对话协作
+        ├── 28-crewai/        # CrewAI 角色驱动
+        ├── 29-langgraph/     # LangGraph 生产级工作流
+        └── 30-weekly-project/ # 实战项目 + 框架对比
 ```
 
 ---
