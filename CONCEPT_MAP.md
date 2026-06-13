@@ -103,7 +103,25 @@ graph TD
         Degradation -->|安全阀| ResearchAssistant
     end
 
-    %% ====== 性能分析层 ======
+    %% ====== 多 Agent 协作层 ======
+    subgraph 多Agent协作
+        SwarmAgent[Swarm Agent<br/>角色 + tools]
+        Handoff[Handoff 转交<br/>tool 返回 Agent]
+        Routine[Routine 预设流程<br/>减少 LLM 调用]
+        GroupChat[AutoGen GroupChat<br/>共享上下文]
+        RoundRobin[RoundRobinSelector<br/>固定轮询]
+        LLMSelector[LLMSelector<br/>动态选人]
+        Termination[TerminationCondition<br/>可组合终止]
+        SwarmAgent -->|返回目标 Agent| Handoff
+        Handoff -->|顺序编排| Routine
+        SwarmAgent -->|多人协作扩展| GroupChat
+        GroupChat -->|固定顺序| RoundRobin
+        GroupChat -->|动态调度| LLMSelector
+        GroupChat -->|安全阀| Termination
+        FC -->|Selector 也是 FC 决策| LLMSelector
+        AgentMemory -->|共享 history| GroupChat
+    end
+
     subgraph 性能优化
         cProfile[cProfile<br/>函数级性能采样]
         pstats[pstats<br/>统计数据解析]
@@ -183,6 +201,11 @@ graph TD
     style BatchEmbed fill:#ff9,stroke:#333,stroke-width:3px
     style LLMBatch fill:#bbf,stroke:#333,stroke-width:2px
     style BatchSize fill:#fbb,stroke:#333,stroke-width:2px
+    style SwarmAgent fill:#fcf,stroke:#333,stroke-width:2px
+    style GroupChat fill:#ff9,stroke:#333,stroke-width:3px
+    style RoundRobin fill:#bbf,stroke:#333,stroke-width:2px
+    style LLMSelector fill:#bfb,stroke:#333,stroke-width:2px
+    style Termination fill:#fbb,stroke:#333,stroke-width:2px
 ```
 
 ---
@@ -227,7 +250,7 @@ graph TD
 | S5 | Prometheus + Grafana 监控 | 20章缓存命中率 + 21章异步 + 22章批处理 | LLM 应用需暴露的自定义指标：Token 消耗（按模型/类型分）、缓存命中率、GPU 利用率、降级次数；成本监控是最大差异——常规服务按 CPU/内存，LLM 按 Token 数计费 |
 | 26 | Swarm Handoff 机制 | 12章 ReAct + 15章 Tool Calling | Handoff 是普通的 tool function，返回值是目标 Agent；框架检测到 Agent 对象时自动切换，不是特殊机制；Routine 模式预设流程减少 LLM 调用 |
 | 26 | Agent 职责单一原则 | 13章 工具工程 + 17章 错误处理 | 每个 Agent 只聚焦一个角色（业务 vs 技术），system prompt 更短更精确；终端 Agent 无 handoff 防止无限转交；和微服务拆分同构 |
-| 27 | AutoGen GroupChat | 26章 Swarm + 15章 FC | RoundRobin 固定轮询 vs Selector LLM 动态选人；终止条件可组合（关键词|轮数）；AgentTool 把 Agent 包装成 Tool 实现递归组合 |
+| 27 | AutoGen GroupChat | 26章 Swarm + 15章 FC | GroupChat 是 Swarm 的多人扩展；RoundRobin 固定轮询 vs Selector LLM 动态选人；TerminationCondition 可组合；AgentTool 把 Agent 包装成 Tool 实现递归组合 |
 | 28 | CrewAI 三段式定义 | 16章 Memory + 13章 工具工程 | Agent(role+goal+backstory) → Task(desc+expected_output) → Crew(agents+tasks+process)；YAML 声明式适合生产；Sequential/Hierarchical 两种 Process |
 | 29 | LangGraph StateGraph | 12章 Agent 循环 + 26章 Swarm | 把 while 循环变成声明式状态机：Node=处理函数，ConditionalEdge=路由决策，Checkpoint=断点续跑；原生支持 HITL/streaming/并行，生产环境首选 |
 
