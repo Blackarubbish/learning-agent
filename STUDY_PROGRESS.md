@@ -62,7 +62,7 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 |------|------|------|---------|
 | 26 | Swarm — Multi-Agent 基础原理 | ✅ 完成 | 2026-06-10 |
 | 27 | AutoGen — 多 Agent 对话协作 | ✅ | 2026-06-13 |
-| 28 | CrewAI — 角色驱动的任务协作 | 📌 待学习 | - |
+| 28 | CrewAI — 角色驱动的任务协作 | ✅ | 2026-06-14 |
 | 29 | LangGraph — 生产级 Agent 工作流 | 📌 待学习 | - |
 | 30 | 实战项目 + 框架对比 | 📌 待学习 | - |
 
@@ -178,6 +178,10 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 | 我能解释 RoundRobin 和 LLMSelector 的适用场景差异 | 4 | 能结合实际案例说明固定流程 vs 开放调研的区别 |
 | 我能实现 AutoGen 风格的 GroupChat（手动版） | 4 | 独立完成 Agent + Selector + Termination + GroupChat，4/4 断言通过 |
 | 我能设计让 LLM 稳定选择下一个发言人的 prompt | 4 | 通过加入角色职责和选择规则，解决了首轮选错人的问题 |
+| 我能解释 CrewAI 三段式（Agent/Task/Crew）各自职责 | 4 | 独立实现极简 CrewAI，理解 role/goal/backstory 和 expected_output 的作用 |
+| 我能区分 sequential 和 hierarchical 两种 Process 的适用场景 | 4 | sequential 适合固定流水线，hierarchical 适合需要协调员的复杂项目 |
+| 我能基于场景选择 Swarm / AutoGen / CrewAI | 4 | 能按「转交/讨论/流水线」三种协调结构做技术选型 |
+| 我能设计带 context 依赖的多任务流水线 | 4 | 独立完成 Task.get_context_string 和 Crew 顺序/层级执行 |
 
 ---
 
@@ -202,9 +206,9 @@ Week 6: Multi-Agent Systems (AutoGen, CrewAI)               🔄 进行中
 
 ## 当前进度
 
-- **已完成章节**: 27 — AutoGen 多 Agent 对话协作
-- **当前学习**: Stage 6 — 多 Agent 系统（CrewAI 下一章）
-- **下次学习**: 28 — CrewAI 角色驱动的任务协作
+- **已完成章节**: 28 — CrewAI 角色驱动的任务协作
+- **当前学习**: Stage 6 — 多 Agent 系统（LangGraph 下一章）
+- **下次学习**: 29 — LangGraph 生产级 Agent 工作流
 
 ---
 
