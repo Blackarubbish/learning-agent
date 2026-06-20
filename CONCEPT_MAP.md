@@ -112,6 +112,12 @@ graph TD
         RoundRobin[RoundRobinSelector<br/>固定轮询]
         LLMSelector[LLMSelector<br/>动态选人]
         Termination[TerminationCondition<br/>可组合终止]
+        StateGraph[StateGraph<br/>声明式状态机]
+        GraphNode[Node<br/>处理函数]
+        GraphState[State<br/>共享字典]
+        ConditionalEdge[ConditionalEdge<br/>条件路由]
+        Checkpoint[Checkpoint<br/>断点续跑]
+        InvokeStream[invoke / stream<br/>运行与观测]
         SwarmAgent -->|返回目标 Agent| Handoff
         Handoff -->|顺序编排| Routine
         SwarmAgent -->|多人协作扩展| GroupChat
@@ -120,6 +126,15 @@ graph TD
         GroupChat -->|安全阀| Termination
         FC -->|Selector 也是 FC 决策| LLMSelector
         AgentMemory -->|共享 history| GroupChat
+        ReAct -->|形式化为| StateGraph
+        StateGraph -->|包含| GraphNode
+        StateGraph -->|包含| ConditionalEdge
+        GraphNode -->|读取/更新| GraphState
+        ConditionalEdge -->|路由| GraphNode
+        StateGraph -->|持久化| Checkpoint
+        StateGraph -->|暴露| InvokeStream
+        StateGraph -->|可表达| Handoff
+        StateGraph -->|可表达| GroupChat
     end
 
     subgraph 性能优化
@@ -206,6 +221,12 @@ graph TD
     style RoundRobin fill:#bbf,stroke:#333,stroke-width:2px
     style LLMSelector fill:#bfb,stroke:#333,stroke-width:2px
     style Termination fill:#fbb,stroke:#333,stroke-width:2px
+    style StateGraph fill:#ff9,stroke:#f00,stroke-width:4px
+    style GraphNode fill:#bbf,stroke:#333,stroke-width:2px
+    style GraphState fill:#bfb,stroke:#333,stroke-width:2px
+    style ConditionalEdge fill:#fbb,stroke:#333,stroke-width:2px
+    style Checkpoint fill:#fcf,stroke:#333,stroke-width:2px
+    style InvokeStream fill:#ddf,stroke:#333,stroke-width:2px
 ```
 
 ---
@@ -254,6 +275,9 @@ graph TD
 | 28 | CrewAI 三段式定义 | 16章 Memory + 13章 工具工程 | Agent(role+goal+backstory) → Task(desc+expected_output) → Crew(agents+tasks+process)；YAML 声明式适合生产；Sequential/Hierarchical 两种 Process |
 | 28 | 多 Agent 框架选型 | 26章 Swarm + 27章 AutoGen | Swarm=两人转交，AutoGen=多人讨论，CrewAI=任务流水线；EDMS 等系统需要按子问题混合使用 |
 | 29 | LangGraph StateGraph | 12章 Agent 循环 + 26章 Swarm | 把 while 循环变成声明式状态机：Node=处理函数，ConditionalEdge=路由决策，Checkpoint=断点续跑；原生支持 HITL/streaming/并行，生产环境首选 |
+| 29 | ConditionalEdge | 12章 ReAct + 15章 FC | 把 ReAct 里隐式的「是否继续循环」判断，显式化为图中的条件边，路由决策可观测、可调试 |
+| 29 | Checkpoint | 16章 AgentMemory + 17章 Reflection | 每步状态持久化，支持崩溃后从断点续跑，是 Reflection 跨轮修正的数据基础 |
+| 29 | invoke / stream | 21章 AsyncIO + 18章 ResearchAssistant | invoke 一次性运行适合批处理，stream 流式暴露中间状态适合 UI 实时反馈和人工介入 |
 
 ---
 
@@ -304,4 +328,14 @@ ResearchAssistant 集成闭环:
               └→ Agent D (审核):   事实校验 [Tool: verify]
           → 最终输出（经过多角色 review）
                ↑__顺序接力 sequential__↑  vs  ↑__自由讨论 groupchat__↑  vs  ↑__层级委托 hierarchical__↑
+
+LangGraph 状态机工作流:
+用户任务 → [START] → [Node: 处理函数] → [ConditionalEdge: 条件路由]
+              ↓ 不满足条件              ↓ 满足条件
+         [Node: 继续处理] ←──────── [Node: 下一步]
+              ↓
+         [Checkpoint: 保存状态] → [人工审核 / 崩溃恢复]
+              ↓
+         [END] → 最终输出
+         ↑__invoke: 一次性运行__↑  vs  ↑__stream: 流式观测每一步__↑
 ```

@@ -63,7 +63,7 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 | 26 | Swarm — Multi-Agent 基础原理 | ✅ 完成 | 2026-06-10 |
 | 27 | AutoGen — 多 Agent 对话协作 | ✅ | 2026-06-13 |
 | 28 | CrewAI — 角色驱动的任务协作 | ✅ | 2026-06-14 |
-| 29 | LangGraph — 生产级 Agent 工作流 | 📌 待学习 | - |
+| 29 | LangGraph — 生产级 Agent 工作流 | ✅ | 2026-06-15 |
 | 30 | 实战项目 + 框架对比 | 📌 待学习 | - |
 
 ---
@@ -182,6 +182,10 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 | 我能区分 sequential 和 hierarchical 两种 Process 的适用场景 | 4 | sequential 适合固定流水线，hierarchical 适合需要协调员的复杂项目 |
 | 我能基于场景选择 Swarm / AutoGen / CrewAI | 4 | 能按「转交/讨论/流水线」三种协调结构做技术选型 |
 | 我能设计带 context 依赖的多任务流水线 | 4 | 独立完成 Task.get_context_string 和 Crew 顺序/层级执行 |
+| 我能解释 LangGraph StateGraph 的核心抽象 | 4 | 独立手写 StateGraph/CompiledGraph，理解 Node/Edge/ConditionalEdge/Checkpoint |
+| 我能把 ReAct 循环改写成声明式状态机 | 4 | 独立完成 research→analyze→conditional→write 工作流，7/7 断言通过 |
+| 我能解释 Checkpoint 在生产环境中的价值 | 3 | 理解断点续跑和审计，但尚未在真实项目中验证 |
+| 我能区分 invoke 和 stream 的适用场景 | 4 | 理解批处理 vs 实时观测/人工干预的差异 |
 
 ---
 
