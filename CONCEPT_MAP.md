@@ -278,6 +278,10 @@ graph TD
 | 29 | ConditionalEdge | 12章 ReAct + 15章 FC | 把 ReAct 里隐式的「是否继续循环」判断，显式化为图中的条件边，路由决策可观测、可调试 |
 | 29 | Checkpoint | 16章 AgentMemory + 17章 Reflection | 每步状态持久化，支持崩溃后从断点续跑，是 Reflection 跨轮修正的数据基础 |
 | 29 | invoke / stream | 21章 AsyncIO + 18章 ResearchAssistant | invoke 一次性运行适合批处理，stream 流式暴露中间状态适合 UI 实时反馈和人工介入 |
+| 30 | 同场景双框架实现 | 26章 Swarm + 27章 AutoGen + 28章 CrewAI + 29章 LangGraph | 同一客服工单场景，CrewAI 用角色流水线实现，LangGraph 用状态机+条件路由实现；关键在于理解框架选型的决策维度 |
+| 30 | CrewAI 流水线模式 | 28章 CrewAI + 13章 工具工程 | Task.context 建立依赖链，Crew 按序执行；适合固定流程、角色分工明确的场景；退回重试需要在流水线中手动控制 |
+| 30 | LangGraph 条件路由 | 29章 StateGraph + 15章 FC | ConditionalEdge 实现分类路由和审核退回；退回逻辑天然适合状态机表达，无需额外控制代码 |
+| 30 | 框架选型决策 | 26-29章 所有框架 + AgentGuide frameworks.md | 按协调结构（转交/讨论/流水线/状态机）选框架，按可控性/学习曲线/生产就绪度做取舍；没有银弹，只有适合场景的选择 |
 
 ---
 

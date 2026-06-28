@@ -14,17 +14,24 @@ mindmap
       LLMSelector = LLM 动态选人
       TerminationCondition = 可组合终止
       AgentTool = 把 Agent 包装成 Tool
-    28-CrewAI 📌
+    28-CrewAI ✅
       Agent = role + goal + backstory
       Task = desc + expected_output
       Crew = agents + tasks + process
       Sequential / Hierarchical 两种流程
-    29-LangGraph 📌
+    29-LangGraph ✅
       StateGraph = 声明式状态机
       Node = 处理函数
       ConditionalEdge = 条件路由
       Checkpoint = 断点续跑
-    30-实战项目 📌
-      框架对比：Swarm / AutoGen / CrewAI / LangGraph
-      选型依据：场景复杂度 / 可控性 / 成本
+      invoke / stream = 运行与观测
+    30-实战项目 ✅
+      智能客服工单处理系统
+      FR-1: LLM 分类 → technical/billing/general
+      FR-2: 知识库语义检索
+      FR-3: 专业客服回复生成
+      FR-4: 四标准质量审核
+      FR-5a: CrewAI 顺序流水线 + 退回重试
+      FR-5b: LangGraph 状态机 + 条件路由
+      三维度框架对比：代码结构/可观测性/灵活性
 ```

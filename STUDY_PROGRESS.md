@@ -64,7 +64,7 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 | 27 | AutoGen — 多 Agent 对话协作 | ✅ | 2026-06-13 |
 | 28 | CrewAI — 角色驱动的任务协作 | ✅ | 2026-06-14 |
 | 29 | LangGraph — 生产级 Agent 工作流 | ✅ | 2026-06-15 |
-| 30 | 实战项目 + 框架对比 | 📌 待学习 | - |
+| 30 | 实战项目 + 框架对比 | ✅ | 2026-06-28 |
 
 ---
 
@@ -186,6 +186,9 @@ AI Agent 开发工程师学习项目，基于 AgentGuide 开源路线。**AI Age
 | 我能把 ReAct 循环改写成声明式状态机 | 4 | 独立完成 research→analyze→conditional→write 工作流，7/7 断言通过 |
 | 我能解释 Checkpoint 在生产环境中的价值 | 3 | 理解断点续跑和审计，但尚未在真实项目中验证 |
 | 我能区分 invoke 和 stream 的适用场景 | 4 | 理解批处理 vs 实时观测/人工干预的差异 |
+| 我能用 CrewAI 和 LangGraph 分别实现同一业务流水线 | 4 | 独立完成第 30 章双框架实现，53/53 测试通过 |
+| 我能从代码结构/可观测性/灵活性三维度对比框架差异 | 4 | 独立完成 compare_frameworks，结合真实 API 体验分析 |
+| 我能根据业务场景（简单流水线 vs 复杂状态机）做框架选型 | 4 | 理解 CrewAI 适合固定流程，LangGraph 适合条件路由+退回重试 |
 
 ---
 
@@ -205,14 +208,14 @@ Week 2: Advanced RAG + Milvus                        ✅ 已完成 (06-11)
 Week 3: Agent Development & Tool Calling          ✅ 已完成 (12-18)
 Week 4: Performance Optimization (Redis, Async, vLLM) ✅ 已完成 (19/24)
 Week 5: Monitoring & Deployment (Docker, Prometheus)       ✅ 已完成
-Week 6: Multi-Agent Systems (AutoGen, CrewAI)               🔄 进行中
+Week 6: Multi-Agent Systems (AutoGen, CrewAI)               ✅ 已完成
 ```
 
 ## 当前进度
 
-- **已完成章节**: 28 — CrewAI 角色驱动的任务协作
-- **当前学习**: Stage 6 — 多 Agent 系统（LangGraph 下一章）
-- **下次学习**: 29 — LangGraph 生产级 Agent 工作流
+- **已完成章节**: 30 — 实战项目 + 框架对比（Stage 6 全部完成 🎉）
+- **当前学习**: 路线完成，等待用户选择下一步方向
+- **下次学习**: 路线结束 — 可考虑自主项目实战或深入某方向
 
 ---
 
@@ -275,7 +278,15 @@ agent-study/
         ├── 27-autogen/       # AutoGen 对话协作
         ├── 28-crewai/        # CrewAI 角色驱动
         ├── 29-langgraph/     # LangGraph 生产级工作流
-        └── 30-weekly-project/ # 实战项目 + 框架对比
+        └── 30-weekly-project/ # 实战项目 + 框架对比（考核模式）
+            ├── README.md       # 产品文档
+            ├── main.py         # 代码框架（TODO-FR-1 ~ TODO-FR-5）
+            ├── tests/          # 功能测试
+            │   ├── test_crewai.py
+            │   ├── test_langgraph.py
+            │   └── test_comparison.py
+            └── notes/
+                └── qa.md       # 费曼笔记模板
 ```
 
 ---
@@ -283,6 +294,6 @@ agent-study/
 ## 学习规则
 
 1. **开始学习前**：读取本文件了解进度 + 能力短板
-2. **学习过程中**：按照 AGENT.md 的引导流程进行
+2. **学习过程中**：按照 CLAUDE.md 的引导流程进行
 3. **完成章节后**：更新状态 ✅ + 更新能力自评表
 4. **每周五**：回顾 + 更新 CONCEPT_MAP.md
