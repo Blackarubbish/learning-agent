@@ -19,7 +19,13 @@ llm = get_or_create_llm(temperature=0)
 import sys
 
 sys.path.insert(
-    0, str(Path(__file__).parent.parent.parent.parent / "stage3-agent-development" / "18-weekly-summary" / "practice")
+    0,
+    str(
+        Path(__file__).parent.parent.parent.parent
+        / "stage3-agent-development"
+        / "18-weekly-summary"
+        / "practice"
+    ),
 )
 from agent import ResearchAssistant
 from memory import LongTermMemory, ShortTermMemory

@@ -201,7 +201,9 @@ if __name__ == "__main__":
     graph.add_node("write", write_node)
     graph.set_entry_point("research")
     graph.add_edge("research", "analyze")
-    graph.add_conditional_edges("analyze", decide_after_analyze, {"write": "write", "research": "research"})
+    graph.add_conditional_edges(
+        "analyze", decide_after_analyze, {"write": "write", "research": "research"}
+    )
     app = graph.compile()
 
     section("2. 运行图")

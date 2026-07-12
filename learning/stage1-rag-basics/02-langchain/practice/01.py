@@ -12,7 +12,7 @@ llm = ChatOpenAI(
     model="deepseek-chat",
     temperature=0,
     openai_api_key=deepseek_api_key,
-    base_url="https://api.deepseek.com/v1"
+    base_url="https://api.deepseek.com/v1",
 )
 
 
@@ -22,23 +22,16 @@ def llm_invoke():
 
 
 def prompt_template(langguage: str, task: str):
-    prompt = ChatPromptTemplate.from_messages([
-        ("system", "你是 {language} 专家"),
-        ("user", "用 {language} 写一个 {task}")
-    ])
+    prompt = ChatPromptTemplate.from_messages(
+        [("system", "你是 {language} 专家"), ("user", "用 {language} 写一个 {task}")]
+    )
     chain = prompt | llm
-    response = chain.invoke({
-        "language": "Python",
-        "task": "快速排序"
-    })
+    response = chain.invoke({"language": "Python", "task": "快速排序"})
     print(response)
 
 
 def run():
-    prompt_template(
-        langguage="rust",
-        task="快速排序"
-    )
+    prompt_template(langguage="rust", task="快速排序")
 
 
 run()

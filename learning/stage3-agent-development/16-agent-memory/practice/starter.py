@@ -8,7 +8,15 @@ TODO 清单：
   5. MemoryAgent.run() — 整合记忆 → 构建提示词 → 调用 LLM → 更新记忆
 """
 
-from common import check, get_or_create_embeddings, get_or_create_llm, load_dotenv_if_needed, reset, section, summary
+from common import (
+    check,
+    get_or_create_embeddings,
+    get_or_create_llm,
+    load_dotenv_if_needed,
+    reset,
+    section,
+    summary,
+)
 
 load_dotenv_if_needed()
 embeddings = get_or_create_embeddings()
@@ -127,7 +135,9 @@ class LongTermMemory:
 值得记住的信息示例：姓名、职业、偏好、技能、目标、经历等。"""
         # TODO 2c: 用 LLM 提取关键信息并存入长期记忆
         response = llm.invoke(extraction_prompt)
-        response_text = response.content.strip() if hasattr(response, "content") else str(response).strip()
+        response_text = (
+            response.content.strip() if hasattr(response, "content") else str(response).strip()
+        )
         if response_text == "无":
             return []
         facts = []
@@ -189,7 +199,9 @@ class MemoryAgent:
     def run(self, user_input: str) -> str:
         """处理一轮用户输入，返回 Agent 响应。"""
         # TODO 3a: 从长期记忆检索与 user_input 相关的信息
-        long_term_results = self.long_term.search(user_input)  # 替换为 self.long_term.search(user_input)
+        long_term_results = self.long_term.search(
+            user_input
+        )  # 替换为 self.long_term.search(user_input)
 
         # TODO 3b: 构建提示词并调用 LLM
         prompt = self._build_prompt(user_input, long_term_results)

@@ -156,7 +156,7 @@ class HybridRerankRetriever:
 
         # 2. RRF 融合
         fused = rrf_fusion([bm25_results, vector_results])
-        candidates = fused[:k * 3]  # 多留一些给 Rerank 筛选
+        candidates = fused[: k * 3]  # 多留一些给 Rerank 筛选
 
         # 3. Rerank 精排
         candidate_texts = [doc.page_content for doc in candidates]
@@ -166,10 +166,12 @@ class HybridRerankRetriever:
         final = []
         for r in rerank_results:
             doc = candidates[r["index"]]
-            final.append(Document(
-                page_content=doc.page_content,
-                metadata={**doc.metadata, "rerank_score": r["relevance_score"]},
-            ))
+            final.append(
+                Document(
+                    page_content=doc.page_content,
+                    metadata={**doc.metadata, "rerank_score": r["relevance_score"]},
+                )
+            )
         return final
 
 
@@ -178,10 +180,12 @@ def compare_all_retrievers(query: str, k: int = 3):
 
     bm25 = BM25Retriever(SAMPLE_DOCS)
     vector = VectorRetriever(SAMPLE_DOCS, embeddings)
-    hybrid_results = rrf_fusion([
-        bm25.retrieve(query, k=k * 2),
-        vector.retrieve(query, k=k * 2),
-    ])[:k]
+    hybrid_results = rrf_fusion(
+        [
+            bm25.retrieve(query, k=k * 2),
+            vector.retrieve(query, k=k * 2),
+        ]
+    )[:k]
     hybrid_rerank = HybridRerankRetriever(SAMPLE_DOCS, embeddings, zhipu_api_key)
 
     print("=" * 80)
@@ -213,7 +217,7 @@ def compare_all_retrievers(query: str, k: int = 3):
         print(f"\n【Rerank 调整了排序】")
         for i, (h, r) in enumerate(zip(hybrid_contents, rerank_contents)):
             changed = " ← 变化" if h != r else ""
-            print(f"  位置{i+1}: RRF={h[:30]}... → Rerank={r[:30]}...{changed}")
+            print(f"  位置{i + 1}: RRF={h[:30]}... → Rerank={r[:30]}...{changed}")
     else:
         print(f"\n【Rerank 确认了 RRF 的排序】")
     print()

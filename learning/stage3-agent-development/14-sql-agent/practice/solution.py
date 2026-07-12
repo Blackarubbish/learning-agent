@@ -147,8 +147,7 @@ def db_schema(table_name: str = "") -> str:
 
     if table_name not in tables:
         return (
-            f"❌ 表 '{table_name}' 不存在。可用表: {', '.join(tables)}\n"
-            f"使用 db_schema() 查看所有表"
+            f"❌ 表 '{table_name}' 不存在。可用表: {', '.join(tables)}\n使用 db_schema() 查看所有表"
         )
 
     # PRAGMA table_info 获取列信息
@@ -181,7 +180,16 @@ def db_query(sql: str, max_rows: int = 10) -> str:
 
     # 安全校验：只允许 SELECT
     upper = sql_stripped.upper()
-    dangerous_keywords = ["INSERT", "UPDATE", "DELETE", "DROP", "ALTER", "CREATE", "ATTACH", "DETACH"]
+    dangerous_keywords = [
+        "INSERT",
+        "UPDATE",
+        "DELETE",
+        "DROP",
+        "ALTER",
+        "CREATE",
+        "ATTACH",
+        "DETACH",
+    ]
     for keyword in dangerous_keywords:
         # 检测关键词是否以独立单词出现（不匹配 SELECT 里的 ET）
         if re.search(rf"\b{keyword}\b", upper):
@@ -369,10 +377,12 @@ class Agent:
                 messages.append({"role": "user", "content": user_question})
             else:
                 last_step = steps[-1]
-                messages.append({
-                    "role": "user",
-                    "content": f"Observation: {last_step['result']}",
-                })
+                messages.append(
+                    {
+                        "role": "user",
+                        "content": f"Observation: {last_step['result']}",
+                    }
+                )
 
             parts = []
             for m in messages:
@@ -403,20 +413,24 @@ class Agent:
                     except Exception as e:
                         observation = f"工具执行失败: {e}"
 
-                steps.append({
-                    "thought": llm_output,
-                    "type": "action",
-                    "tool": tool_name,
-                    "input": tool_input,
-                    "result": observation,
-                })
+                steps.append(
+                    {
+                        "thought": llm_output,
+                        "type": "action",
+                        "tool": tool_name,
+                        "input": tool_input,
+                        "result": observation,
+                    }
+                )
             else:
                 error_msg = f"格式错误 ({parsed.get('reason', '未知')})。请严格按照 Thought/Action/Action Input 或 Thought/Final Answer 格式输出。"
-                steps.append({
-                    "thought": llm_output,
-                    "type": "parse_error",
-                    "result": error_msg,
-                })
+                steps.append(
+                    {
+                        "thought": llm_output,
+                        "type": "parse_error",
+                        "result": error_msg,
+                    }
+                )
 
         last_output = steps[-1].get("thought", "") if steps else ""
         if steps and steps[-1]["type"] == "action" and "错误" not in steps[-1].get("result", ""):
@@ -437,7 +451,10 @@ if __name__ == "__main__":
     section("1. Schema 探索")
     all_tables = db_schema()
     print(f"所有表: {all_tables}")
-    check("列出所有表", "products" in all_tables and "customers" in all_tables and "orders" in all_tables)
+    check(
+        "列出所有表",
+        "products" in all_tables and "customers" in all_tables and "orders" in all_tables,
+    )
 
     products_schema = db_schema("products")
     print(f"\nproducts 表结构:\n{products_schema}")
@@ -481,7 +498,7 @@ if __name__ == "__main__":
     print(f"步骤数: {len(result['steps'])}")
     for i, s in enumerate(result["steps"]):
         if s["type"] == "action":
-            print(f"  步骤 {i+1}: {s['tool']} → {s['result'][:100]}")
+            print(f"  步骤 {i + 1}: {s['tool']} → {s['result'][:100]}")
     print(f"答案: {result['answer'][:300]}")
     check("Agent 探索了 schema", any("schema" in s.get("tool", "") for s in result["steps"]))
 
@@ -492,7 +509,7 @@ if __name__ == "__main__":
     print(f"步骤数: {len(result['steps'])}")
     for i, s in enumerate(result["steps"]):
         if s["type"] == "action":
-            print(f"  步骤 {i+1}: {s['tool']} → {s['result'][:150]}")
+            print(f"  步骤 {i + 1}: {s['tool']} → {s['result'][:150]}")
     print(f"答案: {result['answer']}")
     check("Agent 能回答复杂查询", len(result["answer"]) > 0)
 

@@ -70,11 +70,19 @@ class ResearchAssistant:
         """
         try:
             if name == "search_knowledge":
-                return search_knowledge(query=params.get("query", ""), vectorstore=vectorstore, top_k=params.get("top_k", 5))
+                return search_knowledge(
+                    query=params.get("query", ""),
+                    vectorstore=vectorstore,
+                    top_k=params.get("top_k", 5),
+                )
             elif name == "summarize_text":
-                return summarize_text(text=params.get("text", ""), llm=self.llm, max_words=params.get("max_words", 80))
+                return summarize_text(
+                    text=params.get("text", ""), llm=self.llm, max_words=params.get("max_words", 80)
+                )
             elif name == "save_note":
-                return save_note(content=params.get("content", ""), ltm=self.long_term, tags=params.get("tags"))
+                return save_note(
+                    content=params.get("content", ""), ltm=self.long_term, tags=params.get("tags")
+                )
             else:
                 return json.dumps({"success": False, "error": f"unknown tool: '{name}'"})
         except TypeError as e:
@@ -108,7 +116,11 @@ class ResearchAssistant:
             llm_with_tools = self.llm.bind_tools(TOOLS_SCHEMA)
             response = llm_with_tools.invoke(messages)
 
-            tool_calls = response.tool_calls if hasattr(response, "tool_calls") and response.tool_calls else []
+            tool_calls = (
+                response.tool_calls
+                if hasattr(response, "tool_calls") and response.tool_calls
+                else []
+            )
 
             if not tool_calls:
                 answer = response.content if hasattr(response, "content") else str(response)
@@ -132,7 +144,11 @@ class ResearchAssistant:
                     error = classify_error(parsed.get("error", ""))
 
                     if error.category == ErrorCategory.PERMANENT:
-                        return {"success": False, "answer": f"任务无法完成: {error.summary}", "attempts": tool_attempts}
+                        return {
+                            "success": False,
+                            "answer": f"任务无法完成: {error.summary}",
+                            "attempts": tool_attempts,
+                        }
 
                     if consecutive_failures >= self.degradation_threshold:
                         return {

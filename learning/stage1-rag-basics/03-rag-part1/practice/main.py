@@ -20,7 +20,7 @@ def split_documents(docs, chunk_size: int, chunk_overlap: int):
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=chunk_size,
         chunk_overlap=chunk_overlap,
-        separators=["\n\n", "\n", "。", "？", "！", ""]
+        separators=["\n\n", "\n", "。", "？", "！", ""],
     )
     chunks = splitter.split_documents(docs)
     return chunks
@@ -42,6 +42,7 @@ def analyze_chunks(chunks):
 
 def main():
     import os
+
     script_dir = os.path.dirname(os.path.abspath(__file__))
     sample_path = os.path.join(script_dir, "sample.txt")
 
@@ -60,8 +61,10 @@ def main():
 
     for config in configs:
         print("\n" + "=" * 50)
-        print(f"第二步：分割文档 (chunk_size={config['chunk_size']}, "
-              f"chunk_overlap={config['chunk_overlap']})")
+        print(
+            f"第二步：分割文档 (chunk_size={config['chunk_size']}, "
+            f"chunk_overlap={config['chunk_overlap']})"
+        )
         print("=" * 50)
         chunks = split_documents(docs, **config)
         analyze_chunks(chunks)

@@ -73,7 +73,9 @@ def create_mock_db() -> sqlite3.Connection:
         (9, "升降桌", "办公家具", 2199.00, 10),
         (10, "机械键盘 K200", "电子产品", 499.00, 85),
     ]
-    cursor.executemany("INSERT INTO products (id, name, category, price, stock) VALUES (?, ?, ?, ?, ?)", products)
+    cursor.executemany(
+        "INSERT INTO products (id, name, category, price, stock) VALUES (?, ?, ?, ?, ?)", products
+    )
 
     customers = [
         (1, "张三", "北京", "VIP"),
@@ -85,7 +87,9 @@ def create_mock_db() -> sqlite3.Connection:
         (7, "周九", "广州", "普通"),
         (8, "吴十", "深圳", "普通"),
     ]
-    cursor.executemany("INSERT INTO customers (id, name, city, level) VALUES (?, ?, ?, ?)", customers)
+    cursor.executemany(
+        "INSERT INTO customers (id, name, city, level) VALUES (?, ?, ?, ?)", customers
+    )
 
     orders = [
         (1, 1, 1, 2, "2026-05-01", "completed"),
@@ -146,7 +150,9 @@ def db_schema(table_name: str = "") -> str:
         tables = [row["name"] for row in cursor.fetchall()]
         return f"📋 数据库包含 {len(tables)} 张表: {', '.join(tables)}\n使用 db_schema('<表名>') 查看表结构"
     else:
-        cursor = db.execute("SELECT name FROM sqlite_master WHERE type='table' AND name=?", (table_name,))
+        cursor = db.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name=?", (table_name,)
+        )
         if not cursor.fetchone():
             cursor = db.execute("SELECT name FROM sqlite_master WHERE type='table'")
             tables = [row["name"] for row in cursor.fetchall()]
@@ -187,7 +193,9 @@ def db_query(sql: str, max_rows: int = 10) -> str:
     """
     # TODO: 实现 SQL 查询
     if re.search(r"\b(INSERT|UPDATE|DELETE|DROP|ALTER|CREATE)\b", sql, re.IGNORECASE):
-        keyword = re.search(r"\b(INSERT|UPDATE|DELETE|DROP|ALTER|CREATE)\b", sql, re.IGNORECASE).group(0)
+        keyword = re.search(
+            r"\b(INSERT|UPDATE|DELETE|DROP|ALTER|CREATE)\b", sql, re.IGNORECASE
+        ).group(0)
         return f"⛔ 安全限制：禁止执行 {keyword} 操作。此工具仅支持只读查询 (SELECT)。"
 
     if not re.search(r"\bLIMIT\b", sql, re.IGNORECASE):
@@ -200,13 +208,18 @@ def db_query(sql: str, max_rows: int = 10) -> str:
             return "📊 查询结果: 0 行, 0 列"
 
         col_names = [desc[0] for desc in cursor.description]
-        result_lines = [f"📊 查询结果: {len(rows)} 行, {len(col_names)} 列", f"   列: {', '.join(col_names)}"]
+        result_lines = [
+            f"📊 查询结果: {len(rows)} 行, {len(col_names)} 列",
+            f"   列: {', '.join(col_names)}",
+        ]
         for i, row in enumerate(rows[:max_rows], start=1):
             values = ", ".join(f"{col}={val}" for col, val in zip(col_names, row, strict=True))
             result_lines.append(f"  [{i}] {values}")
 
         if len(rows) > max_rows:
-            result_lines.append(f"⚠️ 结果被截断。显示前 {max_rows} 行，共 {len(rows)} 行。建议缩小查询范围。")
+            result_lines.append(
+                f"⚠️ 结果被截断。显示前 {max_rows} 行，共 {len(rows)} 行。建议缩小查询范围。"
+            )
 
         return "\n".join(result_lines)
     except sqlite3.Error as e:
@@ -330,7 +343,9 @@ class Agent:
         tool_descriptions = build_tool_descriptions(self.tools)
         tool_names = list(self.tools.keys())
 
-        system_prompt = REACT_PROMPT.format(tool_descriptions=tool_descriptions, tool_names="/".join(tool_names))
+        system_prompt = REACT_PROMPT.format(
+            tool_descriptions=tool_descriptions, tool_names="/".join(tool_names)
+        )
 
         messages = [{"role": "system", "content": system_prompt}]
         steps = []

@@ -88,7 +88,9 @@ def naive_search(query: str) -> str:
 
     output = f"找到 {len(results)} 篇文档：\n\n"
     for doc in results:
-        output += f"标题：{doc['title']}\n内容：{doc['content']}\n标签：{', '.join(doc['tags'])}\n\n"
+        output += (
+            f"标题：{doc['title']}\n内容：{doc['content']}\n标签：{', '.join(doc['tags'])}\n\n"
+        )
     return output
 
 
@@ -164,7 +166,7 @@ def batch_process(items_json: str, operation: str) -> str:
         return (
             f"❌ 参数格式错误：items 必须是 JSON 数组字符串。\n"
             f"   收到: {items_json[:80]}\n"
-            f"   正确示例: '[\"文本1\", \"文本2\", \"文本3\"]'"
+            f'   正确示例: \'["文本1", "文本2", "文本3"]\''
         )
 
     if not isinstance(items, list) or len(items) == 0:
@@ -195,8 +197,7 @@ def batch_process(items_json: str, operation: str) -> str:
     progress_pct = int((success + failed) / total * 100)
     output = (
         f"📊 批量{valid_ops[operation]}完成: {progress_pct}% ({success + failed}/{total})\n"
-        f"   成功: {success}, 失败: {failed}\n\n"
-        + "\n".join(results)
+        f"   成功: {success}, 失败: {failed}\n\n" + "\n".join(results)
     )
 
     if failed > 0:
@@ -251,15 +252,16 @@ def api_fetch(endpoint: str, param: str = "") -> str:
         if city in MOCK_API["weather"]:
             return f"🌤 {city}天气: {MOCK_API['weather'][city]}"
         return (
-            f"❌ 未找到城市 '{city}' 的天气数据。\n"
-            f"   已知城市: {list(MOCK_API['weather'].keys())}"
+            f"❌ 未找到城市 '{city}' 的天气数据。\n   已知城市: {list(MOCK_API['weather'].keys())}"
         )
 
     elif endpoint == "news":
         category = param.strip() or "tech"
         if category in MOCK_API["news"]:
             items = MOCK_API["news"][category]
-            return f"📰 {category} 新闻 ({len(items)} 条):\n" + "\n".join(f"  - {item}" for item in items)
+            return f"📰 {category} 新闻 ({len(items)} 条):\n" + "\n".join(
+                f"  - {item}" for item in items
+            )
         return f"❌ 未知新闻类别 '{category}'。可用: {list(MOCK_API['news'].keys())}"
 
     elif endpoint == "stock":
@@ -304,7 +306,7 @@ TOOLS_SMART = {
         "schema": {
             "description": "批量处理文本数据。支持 summarize（摘要）/ classify（分类）/ keywords（关键词提取）。返回每项处理状态和汇总统计",
             "parameters": {
-                "items_json": "JSON 数组字符串，如 '[\"文本1\", \"文本2\"]'",
+                "items_json": 'JSON 数组字符串，如 \'["文本1", "文本2"]\'',
                 "operation": "操作类型: summarize / classify / keywords",
             },
         },
@@ -399,7 +401,7 @@ def parse_react_output(text: str) -> dict:
         if brace_end == -1:
             return {"type": "parse_error", "raw": text, "reason": "JSON 括号不匹配"}
 
-        json_str = rest[brace_start:brace_end + 1]
+        json_str = rest[brace_start : brace_end + 1]
         try:
             tool_input = json.loads(json_str)
         except json.JSONDecodeError:
@@ -432,10 +434,12 @@ class Agent:
                 messages.append({"role": "user", "content": user_question})
             else:
                 last_step = steps[-1]
-                messages.append({
-                    "role": "user",
-                    "content": f"Observation: {last_step['result']}",
-                })
+                messages.append(
+                    {
+                        "role": "user",
+                        "content": f"Observation: {last_step['result']}",
+                    }
+                )
 
             # 组装 prompt 字符串
             parts = []
@@ -467,20 +471,24 @@ class Agent:
                     except Exception as e:
                         observation = f"工具执行失败: {e}"
 
-                steps.append({
-                    "thought": llm_output,
-                    "type": "action",
-                    "tool": tool_name,
-                    "input": tool_input,
-                    "result": observation,
-                })
+                steps.append(
+                    {
+                        "thought": llm_output,
+                        "type": "action",
+                        "tool": tool_name,
+                        "input": tool_input,
+                        "result": observation,
+                    }
+                )
             else:
                 error_msg = f"格式错误 ({parsed.get('reason', '未知')})。请严格按照 Thought/Action/Action Input 或 Thought/Final Answer 格式输出。"
-                steps.append({
-                    "thought": llm_output,
-                    "type": "parse_error",
-                    "result": error_msg,
-                })
+                steps.append(
+                    {
+                        "thought": llm_output,
+                        "type": "parse_error",
+                        "result": error_msg,
+                    }
+                )
 
         # max_steps 用尽
         last_output = steps[-1].get("thought", "") if steps else ""
@@ -558,7 +566,7 @@ if __name__ == "__main__":
     print(f"步骤数: {len(result['steps'])}")
     for i, s in enumerate(result["steps"]):
         if s["type"] == "action":
-            print(f"  步骤 {i+1}: {s['tool']} → {s['result'][:80]}")
+            print(f"  步骤 {i + 1}: {s['tool']} → {s['result'][:80]}")
     print(f"答案: {result['answer']}")
     check("Agent 能查询天气", "晴" in result["answer"] or "25" in result["answer"])
 
@@ -573,8 +581,12 @@ if __name__ == "__main__":
     result_naive = agent_naive.run(question)
     result_smart = agent_smart.run(question)
 
-    print(f"\nNaive Agent: {len(result_naive['steps'])} 步, 答案长度 {len(result_naive['answer'])} 字符")
-    print(f"Smart Agent: {len(result_smart['steps'])} 步, 答案长度 {len(result_smart['answer'])} 字符")
+    print(
+        f"\nNaive Agent: {len(result_naive['steps'])} 步, 答案长度 {len(result_naive['answer'])} 字符"
+    )
+    print(
+        f"Smart Agent: {len(result_smart['steps'])} 步, 答案长度 {len(result_smart['answer'])} 字符"
+    )
     check("Smart Agent 能完成任务", len(result_smart["answer"]) > 0)
 
     summary()

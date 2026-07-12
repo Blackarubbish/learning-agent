@@ -54,7 +54,9 @@ def test_memory_persistence():
     assistant = ResearchAssistant(llm, long_term=ltm)
 
     section("场景 3：长期记忆 — 保存偏好")
-    result1 = assistant.run("记住：我最关注的是 RAG 和 Embedding 相关的内容，我喜欢用表格对比的方式呈现信息")
+    result1 = assistant.run(
+        "记住：我最关注的是 RAG 和 Embedding 相关的内容，我喜欢用表格对比的方式呈现信息"
+    )
     print(f"第一轮: {result1['answer'][:200]}...")
     check("第一轮成功", result1["success"])
 
@@ -85,7 +87,9 @@ def test_degradation():
     assistant = ResearchAssistant(llm, max_retries=5, degradation_threshold=3)
 
     section("场景 5：降级策略")
-    result = assistant.run("帮我保存一个空的笔记，然后搜索空内容，最后再试一次空摘要——重复直到你放弃")
+    result = assistant.run(
+        "帮我保存一个空的笔记，然后搜索空内容，最后再试一次空摘要——重复直到你放弃"
+    )
     print(f"Agent 回答: {result['answer'][:200]}...")
     print(f"工具调用次数: {result['attempts']}")
     check("Agent 未无限循环", result["attempts"] <= 5)

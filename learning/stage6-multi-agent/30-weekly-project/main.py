@@ -111,7 +111,12 @@ def get_crewai_llm() -> LLM:
     # 你可能需要尝试以下几种配置之一：
     #   1. LLM(model="deepseek/deepseek-chat", api_key=api_key, temperature=0)
     #   2. LLM(model="openai/deepseek-chat", base_url="https://api.deepseek.com/v1", api_key=api_key, temperature=0)
-    return LLM(model="deepseek-v4-flash", api_key=api_key, base_url="https://api.deepseek.com", temperature=0)
+    return LLM(
+        model="deepseek-v4-flash",
+        api_key=api_key,
+        base_url="https://api.deepseek.com",
+        temperature=0,
+    )
     # raise NotImplementedError("TODO-CREWAI-LLM: 配置 CrewAI 的 DeepSeek LLM")
 
 
@@ -159,7 +164,9 @@ def classify_ticket(user_question: str, llm: ChatOpenAI) -> dict[str, str]:
 # ============================================================
 
 
-def search_knowledge_base(category: str, user_question: str, llm: ChatOpenAI = None) -> list[dict[str, str]]:
+def search_knowledge_base(
+    category: str, user_question: str, llm: ChatOpenAI = None
+) -> list[dict[str, str]]:
     """TODO-FR-2: 实现知识库检索功能。
 
     验收标准：
@@ -209,7 +216,9 @@ def search_knowledge_base(category: str, user_question: str, llm: ChatOpenAI = N
 # ============================================================
 
 
-def generate_response(user_question: str, category: str, kb_results: list[dict[str, str]], llm) -> str:
+def generate_response(
+    user_question: str, category: str, kb_results: list[dict[str, str]], llm
+) -> str:
     """TODO-FR-3: 实现回复生成功能。
 
     验收标准：
@@ -418,7 +427,9 @@ def run_crewai_pipeline(user_question: str) -> dict:
             context=[task_search],
         )
         task_review = CrewAITask(
-            description=(f"审核下面的回复。上一次被拒原因：{review_info['feedback']}。按 4 条标准审核，输出 JSON。"),
+            description=(
+                f"审核下面的回复。上一次被拒原因：{review_info['feedback']}。按 4 条标准审核，输出 JSON。"
+            ),
             expected_output='{"verdict": "approved|rejected", "feedback": "审核意见"}',
             agent=reviewer,
             context=[task_draft],

@@ -110,7 +110,7 @@ class Swarm:
         handoff_chain = [agent.name]
         for _ in range(self.max_turns):
             if debug:
-                print(f"\n[Turn {_+1}] current_agent={current_agent.name}")
+                print(f"\n[Turn {_ + 1}] current_agent={current_agent.name}")
             system_msg = SystemMessage(content=current_agent.instructions)
             full_messages = [system_msg] + history
             response = None
@@ -150,7 +150,11 @@ class Swarm:
                             break
                         history.append(ToolMessage(content=str(result), tool_call_id=tc["id"]))
             else:
-                return {"answer": response.content, "agent": current_agent.name, "handoff_chain": handoff_chain}
+                return {
+                    "answer": response.content,
+                    "agent": current_agent.name,
+                    "handoff_chain": handoff_chain,
+                }
         raise TooManyTurns()
 
 
@@ -283,7 +287,12 @@ if __name__ == "__main__":
     check("技术问题最终由技术支持处理", result2["agent"] == "tech_support")
     check("发生了 Handoff", len(result2["handoff_chain"]) >= 2)
     check("Handoff 链正确", result2["handoff_chain"] == ["customer_service", "tech_support"])
-    check("回复涉及技术细节", "API" in result2["answer"] or "500" in result2["answer"] or "Content-Type" in result2["answer"])
+    check(
+        "回复涉及技术细节",
+        "API" in result2["answer"]
+        or "500" in result2["answer"]
+        or "Content-Type" in result2["answer"],
+    )
 
     # --- 边界场景：已到技术支持，再问技术问题 ---
     section("场景3: 直接在技术支持 Agent 上提问（无需 Handoff）")
@@ -297,7 +306,12 @@ if __name__ == "__main__":
 
     check("技术问题由技术支持直接处理", result3["agent"] == "tech_support")
     check("未发生 Handoff（终端直接回答）", len(result3["handoff_chain"]) == 1)
-    check("回复包含部署排查", "部署" in result3["answer"] or "DEEPSEEK" in result3["answer"] or "env" in result3["answer"])
+    check(
+        "回复包含部署排查",
+        "部署" in result3["answer"]
+        or "DEEPSEEK" in result3["answer"]
+        or "env" in result3["answer"],
+    )
 
     # --- 带 debug 输出：让你看到 Handoff 切换过程 ---
     section("场景4: Debug 模式 — 观察 Handoff 切换过程")

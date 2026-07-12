@@ -30,27 +30,34 @@ def search_knowledge(query: str, vectorstore: FAISS, top_k: int = 5) -> str:
         JSON 字符串，格式 {"success": bool, "results": [...], "summary": str, "count": int}
     """
     if not query or not query.strip():
-        return json.dumps({
-            "success": False,
-            "error": "invalid parameter: query is empty or missing — please provide a search query",
-        })
+        return json.dumps(
+            {
+                "success": False,
+                "error": "invalid parameter: query is empty or missing — please provide a search query",
+            }
+        )
 
     docs = vectorstore.similarity_search(query, k=top_k)
     if not docs:
-        return json.dumps({
-            "success": True,
-            "results": [],
-            "summary": "未找到相关结果。建议尝试更短或更通用的关键词。",
-            "count": 0,
-        })
+        return json.dumps(
+            {
+                "success": True,
+                "results": [],
+                "summary": "未找到相关结果。建议尝试更短或更通用的关键词。",
+                "count": 0,
+            }
+        )
 
     results = [{"rank": i + 1, "content": d.page_content[:150]} for i, d in enumerate(docs)]
-    return json.dumps({
-        "success": True,
-        "results": results,
-        "summary": f"共找到 {len(results)} 条相关结果（共检索 {top_k} 条）。如需详细信息，请指定序号获取完整内容。",
-        "count": len(results),
-    }, ensure_ascii=False)
+    return json.dumps(
+        {
+            "success": True,
+            "results": results,
+            "summary": f"共找到 {len(results)} 条相关结果（共检索 {top_k} 条）。如需详细信息，请指定序号获取完整内容。",
+            "count": len(results),
+        },
+        ensure_ascii=False,
+    )
 
 
 def summarize_text(text: str, llm, max_words: int = 80) -> str:
@@ -65,10 +72,12 @@ def summarize_text(text: str, llm, max_words: int = 80) -> str:
         JSON 字符串，格式 {"success": bool, "summary": str} 或 {"success": false, "error": str}
     """
     if not text or not text.strip():
-        return json.dumps({
-            "success": False,
-            "error": "invalid parameter: text is empty or missing — please provide text to summarize",
-        })
+        return json.dumps(
+            {
+                "success": False,
+                "error": "invalid parameter: text is empty or missing — please provide text to summarize",
+            }
+        )
 
     trimmed = text[:2000]  # 超长截断保护
     prompt = f"""请用中文对以下内容做摘要，输出 JSON 格式，包含 title（标题）、points（3 个要点）、conclusion（一句话结论），总字数不超过 {max_words} 字。
@@ -98,17 +107,22 @@ def save_note(content: str, ltm: LongTermMemory, tags: list[str] | None = None) 
         JSON 字符串，格式 {"success": bool, "memory_id": str, "message": str}
     """
     if not content or not content.strip():
-        return json.dumps({
-            "success": False,
-            "error": "invalid parameter: content is empty or missing — cannot save empty note",
-        })
+        return json.dumps(
+            {
+                "success": False,
+                "error": "invalid parameter: content is empty or missing — cannot save empty note",
+            }
+        )
 
     memory_id = ltm.add(content, tags)
-    return json.dumps({
-        "success": True,
-        "memory_id": memory_id,
-        "message": f"已保存到长期记忆 (id={memory_id})。当前共 {len(ltm.store)} 条记忆。",
-    }, ensure_ascii=False)
+    return json.dumps(
+        {
+            "success": True,
+            "memory_id": memory_id,
+            "message": f"已保存到长期记忆 (id={memory_id})。当前共 {len(ltm.store)} 条记忆。",
+        },
+        ensure_ascii=False,
+    )
 
 
 # ═══════════════════════════════════════════════════════════════

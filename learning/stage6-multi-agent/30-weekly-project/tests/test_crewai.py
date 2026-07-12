@@ -46,7 +46,9 @@ def test_fr1_classify():
                 detail=f"实际输出: {result}",
             )
         except NotImplementedError:
-            check(f"「{question[:20]}...」→ {expected_category}", False, detail="TODO-FR-1 尚未实现")
+            check(
+                f"「{question[:20]}...」→ {expected_category}", False, detail="TODO-FR-1 尚未实现"
+            )
         except Exception as e:
             check(f"「{question[:20]}...」→ {expected_category}", False, detail=f"异常: {e}")
 
@@ -83,8 +85,12 @@ def test_fr3_generate():
     try:
         response = generate_response("我无法登录", "technical", kb_results, llm)
         check("生成了回复", bool(response))
-        check("回复长度适中 (50-500字)", 50 <= len(response) <= 500, detail=f"长度: {len(response)}")
-        check("回复包含登录相关内容", "登录" in response or "缓存" in response or "密码" in response)
+        check(
+            "回复长度适中 (50-500字)", 50 <= len(response) <= 500, detail=f"长度: {len(response)}"
+        )
+        check(
+            "回复包含登录相关内容", "登录" in response or "缓存" in response or "密码" in response
+        )
     except NotImplementedError:
         check("生成了回复", False, detail="TODO-FR-3 尚未实现")
         check("回复长度适中 (50-500字)", False, detail="TODO-FR-3 尚未实现")
@@ -171,8 +177,12 @@ def test_fr5_crewai_pipeline():
         check("pipeline 标识为 crewai", result.get("pipeline") == "crewai")
     except NotImplementedError:
         for label in [
-            "流水线返回 dict", "包含 final_response", "包含 category 字段",
-            "category 为 technical", "包含 review_verdict 字段", "pipeline 标识为 crewai",
+            "流水线返回 dict",
+            "包含 final_response",
+            "包含 category 字段",
+            "category 为 technical",
+            "包含 review_verdict 字段",
+            "pipeline 标识为 crewai",
         ]:
             check(label, False, detail="TODO-FR-5a 尚未实现")
     except Exception as e:

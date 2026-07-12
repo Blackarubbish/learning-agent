@@ -26,8 +26,11 @@ def test_comparison_completeness():
         check("compare_frameworks 返回 dict", isinstance(result, dict))
     except NotImplementedError:
         for label in [
-            "compare_frameworks 返回 dict", "包含代码结构维度", "包含可观测性维度",
-            "包含灵活性维度", "包含选型建议维度",
+            "compare_frameworks 返回 dict",
+            "包含代码结构维度",
+            "包含可观测性维度",
+            "包含灵活性维度",
+            "包含选型建议维度",
         ]:
             check(label, False, detail="TODO-COMPARE 尚未实现")
         for label in ["代码结构分析非空", "可观测性分析非空", "灵活性分析非空", "选型建议非空"]:
@@ -96,7 +99,8 @@ def test_comparison_insight():
 
     # 必须提到至少 2 个框架名（真实框架版应该提到 CrewAI 和 LangGraph）
     fw_count = sum(
-        1 for fw in ["CrewAI", "LangGraph", "StateGraph", "Crew", "langgraph", "crewai"]
+        1
+        for fw in ["CrewAI", "LangGraph", "StateGraph", "Crew", "langgraph", "crewai"]
         if fw.lower() in all_text.lower()
     )
     check("分析提到至少 2 个框架名", fw_count >= 2, detail=f"提到 {fw_count} 个")

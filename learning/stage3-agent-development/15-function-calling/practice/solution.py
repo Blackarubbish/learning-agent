@@ -59,13 +59,21 @@ def string_tool(text: str, operation: str) -> str:
 
 # 知识库（来自第 13 章）
 KNOWLEDGE_BASE = [
-    {"title": "RAG 基础原理", "content": "RAG 结合信息检索和文本生成，减少 LLM 幻觉。", "tags": "RAG,基础"},
+    {
+        "title": "RAG 基础原理",
+        "content": "RAG 结合信息检索和文本生成，减少 LLM 幻觉。",
+        "tags": "RAG,基础",
+    },
     {
         "title": "Agent ReAct 框架",
         "content": "ReAct = Reasoning + Acting，Agent 循环思考→行动→观察。",
         "tags": "Agent,ReAct",
     },
-    {"title": "向量数据库选型", "content": "FAISS 适合原型，Milvus 适合生产环境。", "tags": "向量数据库,选型"},
+    {
+        "title": "向量数据库选型",
+        "content": "FAISS 适合原型，Milvus 适合生产环境。",
+        "tags": "向量数据库,选型",
+    },
     {
         "title": "Function Calling 原理",
         "content": "模型输出结构化 tool_calls token，解析 100% 可靠。",
@@ -216,7 +224,9 @@ def run_function_calling(user_question: str, max_steps: int = 5) -> dict:
 #   但 LLM 可能忽略 prompt 指令。tool_choice 是 API 级别的硬约束，100% 可靠。
 
 
-def run_fc_with_tool_choice(user_question: str, tool_choice: str | dict = "auto", max_steps: int = 5) -> dict:
+def run_fc_with_tool_choice(
+    user_question: str, tool_choice: str | dict = "auto", max_steps: int = 5
+) -> dict:
     """带 tool_choice 参数的 Function Calling Agent。
 
     tool_choice 是 Function Calling 区别于 ReAct 的关键优势之一：
@@ -362,7 +372,9 @@ def run_react(user_question: str, max_steps: int = 5) -> dict:
                 result = TOOLS_REACT[tool_name]["function"](**tool_input)
             else:
                 result = f"未知工具: {tool_name}"
-            steps.append({"type": "action", "tool": tool_name, "input": tool_input, "result": result})
+            steps.append(
+                {"type": "action", "tool": tool_name, "input": tool_input, "result": result}
+            )
             messages.append({"role": "user", "content": f"Observation: {result}"})
         else:
             messages.append({"role": "user", "content": f"格式错误: {parsed.get('reason')}"})
@@ -449,7 +461,10 @@ if __name__ == "__main__":
     check("auto 模式自主决策", result_auto["answer"] is not None)
     check("required 强制调用了工具", num_calls_req >= 1)
     check("none 禁止调用了工具", num_calls_none == 0)
-    check("指定工具只调用了 calculator", all(n == "calculator" for n in all_names) and len(all_names) > 0)
+    check(
+        "指定工具只调用了 calculator",
+        all(n == "calculator" for n in all_names) and len(all_names) > 0,
+    )
 
     # ── 5. 对比实验：ReAct vs Function Calling ──
     section("5. 对比：ReAct vs Function Calling")

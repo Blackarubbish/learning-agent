@@ -58,14 +58,46 @@ def string_tool(text: str, operation: str) -> str:
 
 
 KNOWLEDGE_BASE = [
-    {"title": "RAG 基础原理", "content": "RAG 结合信息检索和文本生成，减少 LLM 幻觉。", "tags": "RAG,基础"},
-    {"title": "Agent ReAct 框架", "content": "ReAct = Reasoning + Acting，Agent 循环思考→行动→观察。", "tags": "Agent,ReAct"},
-    {"title": "向量数据库选型", "content": "FAISS 适合原型，Milvus 适合生产环境。", "tags": "向量数据库,选型"},
-    {"title": "Function Calling 原理", "content": "模型输出结构化 tool_calls token，解析 100% 可靠。", "tags": "Function Calling"},
-    {"title": "上下文工程实践", "content": "Offload/Retrieve/Compress/Isolate 四种策略管理 Agent 上下文。", "tags": "Agent,上下文工程"},
-    {"title": "Agent Memory 设计", "content": "短期记忆+长期记忆+工作记忆三层架构支撑复杂任务。", "tags": "Agent,Memory"},
-    {"title": "混合检索策略", "content": "BM25 关键词检索与向量语义检索互补，RRF 融合排序。", "tags": "RAG,检索"},
-    {"title": "SQL Agent 安全", "content": "只读围栏+Schema 探索防止 Agent 幻觉导致数据灾难。", "tags": "Agent,SQL,安全"},
+    {
+        "title": "RAG 基础原理",
+        "content": "RAG 结合信息检索和文本生成，减少 LLM 幻觉。",
+        "tags": "RAG,基础",
+    },
+    {
+        "title": "Agent ReAct 框架",
+        "content": "ReAct = Reasoning + Acting，Agent 循环思考→行动→观察。",
+        "tags": "Agent,ReAct",
+    },
+    {
+        "title": "向量数据库选型",
+        "content": "FAISS 适合原型，Milvus 适合生产环境。",
+        "tags": "向量数据库,选型",
+    },
+    {
+        "title": "Function Calling 原理",
+        "content": "模型输出结构化 tool_calls token，解析 100% 可靠。",
+        "tags": "Function Calling",
+    },
+    {
+        "title": "上下文工程实践",
+        "content": "Offload/Retrieve/Compress/Isolate 四种策略管理 Agent 上下文。",
+        "tags": "Agent,上下文工程",
+    },
+    {
+        "title": "Agent Memory 设计",
+        "content": "短期记忆+长期记忆+工作记忆三层架构支撑复杂任务。",
+        "tags": "Agent,Memory",
+    },
+    {
+        "title": "混合检索策略",
+        "content": "BM25 关键词检索与向量语义检索互补，RRF 融合排序。",
+        "tags": "RAG,检索",
+    },
+    {
+        "title": "SQL Agent 安全",
+        "content": "只读围栏+Schema 探索防止 Agent 幻觉导致数据灾难。",
+        "tags": "Agent,SQL,安全",
+    },
 ]
 
 
@@ -73,7 +105,11 @@ def search_tool(query: str) -> str:
     """搜索本地知识库"""
     results = []
     for doc in KNOWLEDGE_BASE:
-        if query.lower() in doc["title"].lower() or query.lower() in doc["content"].lower() or query.lower() in doc["tags"].lower():
+        if (
+            query.lower() in doc["title"].lower()
+            or query.lower() in doc["content"].lower()
+            or query.lower() in doc["tags"].lower()
+        ):
             results.append(doc)
     if not results:
         return f"未找到与 '{query}' 相关的文档"
@@ -209,8 +245,9 @@ if __name__ == "__main__":
     check("至少调用了 search", len(search_calls) >= 1)
     check("至少调用了 calculator", len(calc_calls) >= 1)
     check("返回了非空答案", len(result["answer"]) > 0)
-    check("答案提及了 Agent 相关文档", any(
-        keyword in result["answer"].lower() for keyword in ["文档", "篇", "agent"]
-    ))
+    check(
+        "答案提及了 Agent 相关文档",
+        any(keyword in result["answer"].lower() for keyword in ["文档", "篇", "agent"]),
+    )
 
     summary()

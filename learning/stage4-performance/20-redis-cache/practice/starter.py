@@ -131,7 +131,9 @@ def test_semantic_cache(embeddings, redis) -> dict:
     # 缓存原文的响应
     original_response = llm.invoke(original_query)
     # 提取文本内容（如果返回的是 AIMessage）
-    original_response_text = original_response if isinstance(original_response, str) else original_response.content
+    original_response_text = (
+        original_response if isinstance(original_response, str) else original_response.content
+    )
     semantic_cache.set(original_query, original_response_text)
 
     # 测试变体查询的命中情况

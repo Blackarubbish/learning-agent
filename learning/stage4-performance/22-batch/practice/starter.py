@@ -205,7 +205,9 @@ def find_best_batch_size(texts: list[str], sizes: list[int] | None = None):
     base_elapsed, _ = measure_embedding(texts, 1)
 
     # 打印表头
-    print(f"{'batch_size':>10} | {'耗时':>10} | {'API调用':>8} | {'单条均摊(ms)':>12} | {'vs bs=1 加速比':>12}")
+    print(
+        f"{'batch_size':>10} | {'耗时':>10} | {'API调用':>8} | {'单条均摊(ms)':>12} | {'vs bs=1 加速比':>12}"
+    )
 
     elapsed_30 = None
     for size in sizes:
@@ -215,7 +217,9 @@ def find_best_batch_size(texts: list[str], sizes: list[int] | None = None):
         size_result.append({"bs": size, "result": (elapsed, api_calls)})
         if size == 30:
             elapsed_30 = elapsed
-        print(f"{size:>10} | {elapsed:>10.3f} | {api_calls:>8} | {avg_time:>12.2f} | {speedup:>12.2f}")
+        print(
+            f"{size:>10} | {elapsed:>10.3f} | {api_calls:>8} | {avg_time:>12.2f} | {speedup:>12.2f}"
+        )
 
     check("bs=30 比 bs=1 快", elapsed_30 is not None and elapsed_30 < base_elapsed)
 

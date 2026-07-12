@@ -74,7 +74,11 @@ def classify_error(error_message: str) -> StructuredError:
     无法分类时默认 PERMANENT（安全侧：宁可放弃也不死循环）。
     """
     error_lower = error_message.lower()
-    for category in [ErrorCategory.PERMANENT, ErrorCategory.RETRYABLE, ErrorCategory.PARAMETER_ERROR]:
+    for category in [
+        ErrorCategory.PERMANENT,
+        ErrorCategory.RETRYABLE,
+        ErrorCategory.PARAMETER_ERROR,
+    ]:
         for pattern in ERROR_PATTERNS[category]:
             if pattern in error_lower:
                 return StructuredError(

@@ -109,7 +109,7 @@ class LLMSelector(SpeakerSelector):
 {roles_desc}
 
 要求：
-1. 只返回一个名字，必须是以下之一：{', '.join(names)}
+1. 只返回一个名字，必须是以下之一：{", ".join(names)}
 2. 不要解释、不要标点、不要多余内容
 3. 如果是第一轮且没有历史，优先让研究员（researcher）先发言
 

@@ -110,10 +110,14 @@ async def async_search(query: str, top_k: int = 5) -> dict:
 
     results = []
     for i, d in enumerate(docs):
-        results.append({
-            "rank": i + 1,
-            "content": d.page_content[:150] + "..." if len(d.page_content) > 150 else d.page_content,
-        })
+        results.append(
+            {
+                "rank": i + 1,
+                "content": d.page_content[:150] + "..."
+                if len(d.page_content) > 150
+                else d.page_content,
+            }
+        )
     return {"success": True, "results": results, "count": len(results)}
 
 
@@ -158,7 +162,9 @@ TOOLS_SCHEMA = [
     },
 ]
 
-SYSTEM_PROMPT = "你是一个 AI 研究助手。用中文回复。优先搜索知识库回答问题。如果搜索结果不够，可以对文档做摘要。"
+SYSTEM_PROMPT = (
+    "你是一个 AI 研究助手。用中文回复。优先搜索知识库回答问题。如果搜索结果不够，可以对文档做摘要。"
+)
 
 
 class AsyncAgent:
@@ -172,7 +178,9 @@ class AsyncAgent:
         if tool_name == "search_knowledge":
             result = await async_search(tool_args.get("query", ""), tool_args.get("top_k", 5))
         elif tool_name == "summarize_text":
-            result = await async_summarize(tool_args.get("text", ""), tool_args.get("max_words", 80))
+            result = await async_summarize(
+                tool_args.get("text", ""), tool_args.get("max_words", 80)
+            )
         else:
             result = {"success": False, "error": f"未知工具: {tool_name}"}
         return json.dumps(result, ensure_ascii=False)
@@ -231,27 +239,36 @@ class AsyncAgent:
                 tool_args = call.get("args", {})
 
                 if tool_name == "search_knowledge":
-                    docs = vectorstore.similarity_search(tool_args.get("query", ""), k=tool_args.get("top_k", 5))
+                    docs = vectorstore.similarity_search(
+                        tool_args.get("query", ""), k=tool_args.get("top_k", 5)
+                    )
                     result = {
                         "success": True,
                         "results": [
-                            {"rank": i + 1, "content": d.page_content[:150]} for i, d in enumerate(docs)
+                            {"rank": i + 1, "content": d.page_content[:150]}
+                            for i, d in enumerate(docs)
                         ],
                         "count": len(docs),
                     }
                 elif tool_name == "summarize_text":
                     result = {
                         "success": True,
-                        "summary": llm.invoke([
-                            SystemMessage(content="你是一个中文文本摘要助手。"),
-                            HumanMessage(content=f"摘要（{tool_args.get('max_words', 80)}字内）：{tool_args.get('text', '')}"),
-                        ]).content,
+                        "summary": llm.invoke(
+                            [
+                                SystemMessage(content="你是一个中文文本摘要助手。"),
+                                HumanMessage(
+                                    content=f"摘要（{tool_args.get('max_words', 80)}字内）：{tool_args.get('text', '')}"
+                                ),
+                            ]
+                        ).content,
                     }
                 else:
                     result = {"success": False, "error": f"未知工具: {tool_name}"}
 
                 messages.append(
-                    ToolMessage(content=json.dumps(result, ensure_ascii=False), tool_call_id=call["id"])
+                    ToolMessage(
+                        content=json.dumps(result, ensure_ascii=False), tool_call_id=call["id"]
+                    )
                 )
                 tool_calls_count += 1
 
@@ -320,7 +337,9 @@ if __name__ == "__main__":
 
     # --- TODO 1: async_summarize ---
     section("TODO 1: 异步 LLM 调用")
-    result1 = asyncio.run(async_summarize("异步编程使用协程和事件循环，在 I/O 等待时切换到其他任务，提升并发吞吐。"))
+    result1 = asyncio.run(
+        async_summarize("异步编程使用协程和事件循环，在 I/O 等待时切换到其他任务，提升并发吞吐。")
+    )
     print(f"摘要: {result1.get('summary', '')[:100]}...")
     check("async_summarize 返回成功", result1.get("success"))
     check("包含 summary 字段", "summary" in result1)

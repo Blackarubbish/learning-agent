@@ -36,17 +36,11 @@ class ZhipuEmbeddings(Embeddings):
         self.client = client
 
     def embed_documents(self, texts):
-        response = self.client.embeddings.create(
-            model="embedding-3",
-            input=texts
-        )
+        response = self.client.embeddings.create(model="embedding-3", input=texts)
         return [item.embedding for item in response.data]
 
     def embed_query(self, text):
-        response = self.client.embeddings.create(
-            model="embedding-3",
-            input=[text]
-        )
+        response = self.client.embeddings.create(model="embedding-3", input=[text])
         return response.data[0].embedding
 
 
@@ -97,15 +91,17 @@ class PDFLoader:
 
     def load(self) -> list:
         from langchain_core.documents import Document
+
         docs = []
         with pdfplumber.open(self.file_path) as pdf:
             for i, page in enumerate(pdf.pages):
                 text = page.extract_text()
                 if text:
-                    docs.append(Document(
-                        page_content=text,
-                        metadata={"page": i + 1, "source": self.file_path}
-                    ))
+                    docs.append(
+                        Document(
+                            page_content=text, metadata={"page": i + 1, "source": self.file_path}
+                        )
+                    )
         return docs
 
 
@@ -130,9 +126,7 @@ def ingest_document(session_id: str, file_path: str, filename: str) -> IngestRes
         raise HTTPException(status_code=400, detail=f"文档加载失败: {str(e)}")
 
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=500,
-        chunk_overlap=50,
-        separators=["\n\n", "\n", "。", "？", "！", " ", ""]
+        chunk_size=500, chunk_overlap=50, separators=["\n\n", "\n", "。", "？", "！", " ", ""]
     )
     chunks = splitter.split_documents(docs)
 
@@ -148,7 +142,7 @@ def ingest_document(session_id: str, file_path: str, filename: str) -> IngestRes
         session_id=session_id,
         filename=filename,
         chunks=len(chunks),
-        message="文档摄取成功，可以开始问答了"
+        message="文档摄取成功，可以开始问答了",
     )
 
 
@@ -174,15 +168,12 @@ def get_chain(session_id: str) -> RunnablePassthrough:
         session_vectorstores[session_id] = vectorstore
 
     vectorstore = session_vectorstores[session_id]
-    retriever = vectorstore.as_retriever(
-        search_kwargs={"k": 3},
-        return_source_documents=True
-    )
+    retriever = vectorstore.as_retriever(search_kwargs={"k": 3}, return_source_documents=True)
     llm = ChatOpenAI(
         model="deepseek-chat",
         temperature=0,
         openai_api_key=deepseek_api_key,
-        base_url="https://api.deepseek.com/v1"
+        base_url="https://api.deepseek.com/v1",
     )
 
     def format_docs(docs):
@@ -233,10 +224,7 @@ def ask_question(req: QuestionRequest):
     if vectorstore:
         docs = vectorstore.similarity_search(req.question, k=3)
 
-    return QuestionResponse(
-        answer=answer,
-        sources=[doc.page_content for doc in docs]
-    )
+    return QuestionResponse(answer=answer, sources=[doc.page_content for doc in docs])
 
 
 @app.get("/health")

@@ -14,18 +14,12 @@ class ZhipuEmbeddings(Embeddings):
 
     def embed_documents(self, texts):
         """嵌入多个文档"""
-        response = self.client.embeddings.create(
-            model="embedding-3",
-            input=texts
-        )
+        response = self.client.embeddings.create(model="embedding-3", input=texts)
         return [item.embedding for item in response.data]
 
     def embed_query(self, text):
         """嵌入单个查询"""
-        response = self.client.embeddings.create(
-            model="embedding-3",
-            input=[text]
-        )
+        response = self.client.embeddings.create(model="embedding-3", input=[text])
         return response.data[0].embedding
 
 
@@ -50,7 +44,7 @@ def split_documents(docs, chunk_size: int, chunk_overlap: int):
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=chunk_size,
         chunk_overlap=chunk_overlap,
-        separators=["\n\n", "\n", "。", "？", "！", ""]
+        separators=["\n\n", "\n", "。", "？", "！", ""],
     )
     chunks = splitter.split_documents(docs)
     return chunks
@@ -60,10 +54,7 @@ def vectorize_documents(chunks):
     """向量化文档"""
     print(f"开始向量化 {len(chunks)} 个文档块")
 
-    vector_store = FAISS.from_documents(
-        documents=chunks,
-        embedding=embeddings
-    )
+    vector_store = FAISS.from_documents(documents=chunks, embedding=embeddings)
 
     print(f"✅ 向量化完成：{len(chunks)} 个文档块")
     return vector_store
@@ -78,6 +69,7 @@ def similarity_search(vector_store, query, k=3):
 
 if __name__ == "__main__":
     import os
+
     script_dir = os.path.dirname(os.path.abspath(__file__))
     sample_path = os.path.join(script_dir, "sample.txt")
 

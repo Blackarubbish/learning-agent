@@ -20,7 +20,15 @@ from common.check import check
 load_dotenv_if_needed()
 llm = get_or_create_llm(temperature=0)
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "stage3-agent-development" / "18-weekly-summary" / "practice"))
+sys.path.insert(
+    0,
+    str(
+        Path(__file__).parent.parent.parent.parent
+        / "stage3-agent-development"
+        / "18-weekly-summary"
+        / "practice"
+    ),
+)
 from memory import LongTermMemory, ShortTermMemory
 from agent import ResearchAssistant
 
@@ -77,14 +85,16 @@ def run_experiments() -> list[dict]:
         stats.sort_stats("cumtime")
         stats.print_stats(3)
 
-        results.append({
-            "label": label,
-            "query": query,
-            "success": result["success"],
-            "attempts": result["attempts"],
-            "elapsed_s": round(elapsed, 2),
-            "top3_functions": stream.getvalue().strip(),
-        })
+        results.append(
+            {
+                "label": label,
+                "query": query,
+                "success": result["success"],
+                "attempts": result["attempts"],
+                "elapsed_s": round(elapsed, 2),
+                "top3_functions": stream.getvalue().strip(),
+            }
+        )
 
     return results
 
@@ -142,7 +152,10 @@ if __name__ == "__main__":
         print(f"  Top 3 函数:\n{exp['top3_functions']}")
     check("3 个实验全部完成", len(experiments) == 3)
     # 多工具查询比简单查询耗时长（因为调用更多次 LLM）
-    check("多工具查询耗时 ≥ 简单查询", experiments[1]["elapsed_s"] >= experiments[0]["elapsed_s"] * 0.5)
+    check(
+        "多工具查询耗时 ≥ 简单查询",
+        experiments[1]["elapsed_s"] >= experiments[0]["elapsed_s"] * 0.5,
+    )
 
     section("场景 3: 调用链分析")
     show_call_tree(profiler)

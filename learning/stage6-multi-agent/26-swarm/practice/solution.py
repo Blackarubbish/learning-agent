@@ -70,7 +70,7 @@ class Swarm:
 
         for turn in range(self.max_turns):
             if debug:
-                print(f"\n[Turn {turn+1}] current_agent={current_agent.name}")
+                print(f"\n[Turn {turn + 1}] current_agent={current_agent.name}")
 
             # 1. 构建带 system prompt 的消息
             #    当前 Agent 的 instructions 作为 system prompt
@@ -255,6 +255,11 @@ if __name__ == "__main__":
     check("技术问题最终由技术支持处理", result2["agent"] == "tech_support")
     check("发生了 Handoff", len(result2["handoff_chain"]) >= 2)
     check("Handoff 链正确", result2["handoff_chain"] == ["customer_service", "tech_support"])
-    check("回复涉及技术细节", "API" in result2["answer"] or "500" in result2["answer"] or "Content-Type" in result2["answer"])
+    check(
+        "回复涉及技术细节",
+        "API" in result2["answer"]
+        or "500" in result2["answer"]
+        or "Content-Type" in result2["answer"],
+    )
 
     summary()

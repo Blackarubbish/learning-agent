@@ -24,8 +24,10 @@ from ragas.metrics import (
     ContextRecall,
     AnswerCorrectness,
 )
+
 # suppress deprecation warnings - these imports work fine in ragas 0.4.x
 import warnings
+
 warnings.filterwarnings("ignore", category=DeprecationWarning, module="ragas")
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
@@ -114,10 +116,11 @@ dataset = EvaluationDataset(samples=samples)
 # === 逐个指标运行评估 ===
 # 先逐个跑，观察每个指标的输出；最后一起跑看汇总
 
+
 def run_single_metric(metric, name):
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"指标: {name}")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
     result = evaluate(
         dataset,
         metrics=[metric],
@@ -156,9 +159,9 @@ r5 = run_single_metric(AnswerCorrectness(), "Answer Correctness (答案正确性
 
 
 # === 汇总所有指标 ===
-print(f"\n{'='*60}")
+print(f"\n{'=' * 60}")
 print("汇总: 所有指标一起跑")
-print(f"{'='*60}")
+print(f"{'=' * 60}")
 
 ar_metric_full = AnswerRelevancy()
 ar_metric_full.generate_n = 1

@@ -84,17 +84,20 @@ def run_embedding_benchmark():
     elapsed_1, _, _ = results[1]
     elapsed_30, _, _ = results[30]
 
-    check("bs=1 调用 30 次 API", calls_1 == 30,
-          f"预期 30 次，实际 {calls_1} 次")
-    check("bs=30 只调用 1 次 API", calls_30 == 1,
-          f"预期 1 次，实际 {calls_30} 次")
-    check("bs=30 比 bs=1 快", elapsed_30 < elapsed_1,
-          f"bs=1: {elapsed_1:.1f}s, bs=30: {elapsed_30:.1f}s")
+    check("bs=1 调用 30 次 API", calls_1 == 30, f"预期 30 次，实际 {calls_1} 次")
+    check("bs=30 只调用 1 次 API", calls_30 == 1, f"预期 1 次，实际 {calls_30} 次")
+    check(
+        "bs=30 比 bs=1 快",
+        elapsed_30 < elapsed_1,
+        f"bs=1: {elapsed_1:.1f}s, bs=30: {elapsed_30:.1f}s",
+    )
 
     # 性能差距来自 RTT 而非计算：如果 30 次 API vs 1 次 API，差距 ≈ 29 × RTT
     rtt_estimate = (elapsed_1 - elapsed_30) / (calls_1 - calls_30)
-    print(f"\n估算单次 RTT ≈ {(elapsed_1 - elapsed_30) / (calls_1 - calls_30) * 1000:.0f}ms "
-          f"(= ({elapsed_1:.1f}s - {elapsed_30:.1f}s) / ({calls_1} - {calls_30}) 次)")
+    print(
+        f"\n估算单次 RTT ≈ {(elapsed_1 - elapsed_30) / (calls_1 - calls_30) * 1000:.0f}ms "
+        f"(= ({elapsed_1:.1f}s - {elapsed_30:.1f}s) / ({calls_1} - {calls_30}) 次)"
+    )
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -127,18 +130,25 @@ def benchmark_llm_batch(questions: list[str]):
     print(f"batch x{len(questions)}: {batch_time:.1f}s")
     print(f"加速比: {speedup:.1f}x")
     print(f"估算单次耗时: {single_estimate:.1f}s")
-    print(f"batch 耗时 vs 单次耗时: {batch_time:.1f}s vs ~{single_estimate:.1f}s "
-          f"({'≈ 单次' if abs(batch_time - single_estimate) < single_estimate * 0.5 else '注意：batch 并非合并为一次请求'})")
+    print(
+        f"batch 耗时 vs 单次耗时: {batch_time:.1f}s vs ~{single_estimate:.1f}s "
+        f"({'≈ 单次' if abs(batch_time - single_estimate) < single_estimate * 0.5 else '注意：batch 并非合并为一次请求'})"
+    )
 
-    check("batch 比串行快", batch_time < serial_time,
-          f"串行{serial_time:.1f}s vs batch{batch_time:.1f}s")
+    check(
+        "batch 比串行快",
+        batch_time < serial_time,
+        f"串行{serial_time:.1f}s vs batch{batch_time:.1f}s",
+    )
 
     # 关键验证：batch 耗时并非 1/n（因为它不是合并请求，而是并发请求）
     # batch 耗时应该明显大于 serial_time / len(questions) 的理论下限
     theoretical_min = serial_time / len(questions)
-    check("batch 耗时 > 理论最小值（证明它不是合并为一次请求）",
-          batch_time > theoretical_min * 0.5,
-          f"batch{batch_time:.1f}s vs 理论下限{theoretical_min:.1f}s")
+    check(
+        "batch 耗时 > 理论最小值（证明它不是合并为一次请求）",
+        batch_time > theoretical_min * 0.5,
+        f"batch{batch_time:.1f}s vs 理论下限{theoretical_min:.1f}s",
+    )
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -173,8 +183,10 @@ def find_best_batch_size(texts: list[str], sizes: list[int] | None = None):
             marginal_gain = prev_elapsed / elapsed if elapsed > 0 else float("inf")
             marginal = f"(vs bs={prev_bs}: {marginal_gain:.1f}x)"
 
-        print(f"{bs:<12} {elapsed:<10.2f}s {calls:<10} {per_item_ms:<12.1f}ms "
-              f"{speedup:<10.1f}x {marginal}")
+        print(
+            f"{bs:<12} {elapsed:<10.2f}s {calls:<10} {per_item_ms:<12.1f}ms "
+            f"{speedup:<10.1f}x {marginal}"
+        )
 
         prev_elapsed = elapsed
         prev_bs = bs

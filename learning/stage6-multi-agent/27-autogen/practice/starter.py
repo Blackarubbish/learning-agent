@@ -150,9 +150,13 @@ class LLMSelector(SpeakerSelector):
 只返回一个名字，必须是以下之一：{", ".join(p.name for p in participants)}。不要解释、不要标点。"""
         response = llm.invoke([{"role": "user", "content": prompt}])
         # 提取文本（兼容不同模型类型）
-        chosen_name = response.content.strip() if hasattr(response, "content") else str(response).strip()
+        chosen_name = (
+            response.content.strip() if hasattr(response, "content") else str(response).strip()
+        )
         chosen_name = chosen_name.strip().strip('"').strip("'").lower()
-        print(f"🧠 LLM 原始选择: '{getattr(response, 'content', str(response))}' → 解析后: '{chosen_name}'")
+        print(
+            f"🧠 LLM 原始选择: '{getattr(response, 'content', str(response))}' → 解析后: '{chosen_name}'"
+        )
 
         for agent in participants:
             if agent.name.lower() == chosen_name:
@@ -199,7 +203,9 @@ class GroupChat:
         print(f"\n🚀 GroupChat 开始，任务: {task}")
         for turn in range(self.max_turns):
             print(f"\n--- 第 {turn + 1} 轮 ---")
-            current_agent = self.selector.select(participants=self.participants, history=self.history)
+            current_agent = self.selector.select(
+                participants=self.participants, history=self.history
+            )
             response = current_agent.run(task=task, history=self.history)
             print(f"💬 {current_agent.name} 说: {response[:100]}...")
             response_format = self._format_history_message(current_agent.name, response)
@@ -239,12 +245,16 @@ if __name__ == "__main__":
     # history = chat.run("请介绍 RAG 的基本概念")
     participants = [researcher, analyst, writer]
     chat = GroupChat(
-        participants=participants, selector=RoundRobinSelector(), termination_condition=MaxMessageTermination(5)
+        participants=participants,
+        selector=RoundRobinSelector(),
+        termination_condition=MaxMessageTermination(5),
     )
     history = chat.run("请介绍 RAG 的基本概念")
 
     check("RoundRobin 产生了 5 条消息", len(history) == 5)
-    check("三个 Agent 都参与了", len(set(m["name"] for m in history if m["role"] == "assistant")) == 3)
+    check(
+        "三个 Agent 都参与了", len(set(m["name"] for m in history if m["role"] == "assistant")) == 3
+    )
     section("测试 LLM 动态选人")
 
     # TODO 7: 创建 LLMSelector + TextMentionTermination("TERMINATE")

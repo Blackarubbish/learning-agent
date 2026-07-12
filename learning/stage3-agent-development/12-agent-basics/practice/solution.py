@@ -34,9 +34,18 @@ def calculator_tool(expression: str) -> str:
     # 检查非法字符，防止代码注入
     for ch in expression:
         if ch.isalpha():
-            if not any(expression.startswith(kw) for kw in ("sqrt", "sin", "cos", "tan", "abs", "pi")):
+            if not any(
+                expression.startswith(kw) for kw in ("sqrt", "sin", "cos", "tan", "abs", "pi")
+            ):
                 continue
-    allowed_funcs = {"sqrt": math.sqrt, "sin": math.sin, "cos": math.cos, "tan": math.tan, "abs": abs, "pi": math.pi}
+    allowed_funcs = {
+        "sqrt": math.sqrt,
+        "sin": math.sin,
+        "cos": math.cos,
+        "tan": math.tan,
+        "abs": abs,
+        "pi": math.pi,
+    }
     sanitized = expression.replace("^", "**")
     # 只允许安全的 builtins
     safe_builtins = {k: v for k, v in vars(math).items() if not k.startswith("_")}
@@ -80,7 +89,10 @@ TOOLS = {
         "function": string_tool,
         "schema": {
             "description": "对字符串进行操作。支持: reverse（反转）, uppercase（大写）, lowercase（小写）, length（长度）, word_count（单词数）",
-            "parameters": {"text": "要操作的字符串", "operation": "操作类型: reverse/uppercase/lowercase/length/word_count"},
+            "parameters": {
+                "text": "要操作的字符串",
+                "operation": "操作类型: reverse/uppercase/lowercase/length/word_count",
+            },
         },
     },
 }
@@ -89,6 +101,7 @@ TOOLS = {
 # ═══════════════════════════════════════════
 # 2. ReAct Prompt 模板
 # ═══════════════════════════════════════════
+
 
 def build_tool_descriptions(tools: dict) -> str:
     """将工具注册表格式化为 LLM 可读的描述"""
@@ -197,10 +210,12 @@ class SimpleAgent:
             else:
                 # 后续步骤：追加 observation 作为 user message
                 last_step = steps[-1]
-                messages.append({
-                    "role": "user",
-                    "content": f"Observation: {last_step['result']}",
-                })
+                messages.append(
+                    {
+                        "role": "user",
+                        "content": f"Observation: {last_step['result']}",
+                    }
+                )
 
             # 调用 LLM — 用 LangChain ChatPromptTemplate 不太好处理多轮对话，
             # 这里直接用 format 拼接，因为 messages 结构很简单
@@ -240,29 +255,36 @@ class SimpleAgent:
                     except Exception as e:
                         observation = f"工具执行失败: {e}"
 
-                steps.append({
-                    "thought": llm_output,
-                    "type": "action",
-                    "tool": tool_name,
-                    "input": tool_input,
-                    "result": observation,
-                })
+                steps.append(
+                    {
+                        "thought": llm_output,
+                        "type": "action",
+                        "tool": tool_name,
+                        "input": tool_input,
+                        "result": observation,
+                    }
+                )
 
             else:
                 # 解析失败，提示 LLM 修正格式
                 error_msg = f"格式错误 ({parsed.get('reason', '未知')})。请严格按照 Thought/Action/Action Input 或 Thought/Final Answer 格式输出。"
-                steps.append({
-                    "thought": llm_output,
-                    "type": "parse_error",
-                    "result": error_msg,
-                })
+                steps.append(
+                    {
+                        "thought": llm_output,
+                        "type": "parse_error",
+                        "result": error_msg,
+                    }
+                )
 
         # max_steps 用尽——最后一次尝试提取答案
         last_output = steps[-1].get("thought", "") if steps else ""
         # 如果最后一步仍有计算结果，直接返回
         if steps and steps[-1]["type"] == "action" and "错误" not in steps[-1].get("result", ""):
             return {"answer": steps[-1]["result"], "steps": steps}
-        return {"answer": f"Agent 在 {max_steps} 步内未能得出最终答案。最后状态: {last_output[:200]}", "steps": steps}
+        return {
+            "answer": f"Agent 在 {max_steps} 步内未能得出最终答案。最后状态: {last_output[:200]}",
+            "steps": steps,
+        }
 
 
 # ═══════════════════════════════════════════
@@ -293,7 +315,7 @@ if __name__ == "__main__":
     print(f"问题: 计算 15 * 7 + 3 的结果")
     print(f"推理步骤数: {len(result['steps'])}")
     for i, step in enumerate(result["steps"]):
-        print(f"  步骤 {i+1}: {step.get('tool', 'final')}")
+        print(f"  步骤 {i + 1}: {step.get('tool', 'final')}")
     print(f"答案: {result['answer']}")
     check("Agent 返回了答案", len(result["answer"]) > 0)
     check("答案包含计算结果", "108" in result["answer"])
@@ -301,9 +323,11 @@ if __name__ == "__main__":
     result = agent.run("把 'Hello World' 反转一下")
     print(f"\n问题: 把 'Hello World' 反转一下")
     print(f"答案: {result['answer']}")
-    check("字符串工具被调用", "dlroW olleH" in result["answer"] or any(
-        "dlroW olleH" in s.get("result", "") for s in result["steps"]
-    ))
+    check(
+        "字符串工具被调用",
+        "dlroW olleH" in result["answer"]
+        or any("dlroW olleH" in s.get("result", "") for s in result["steps"]),
+    )
 
     # 3. 多工具联合测试
     section("3. 多工具联合测试")
@@ -312,7 +336,7 @@ if __name__ == "__main__":
     print(f"推理步骤数: {len(result['steps'])}")
     for i, step in enumerate(result["steps"]):
         if step["type"] == "action":
-            print(f"  步骤 {i+1}: Action={step['tool']} Input={step['input']} → {step['result']}")
+            print(f"  步骤 {i + 1}: Action={step['tool']} Input={step['input']} → {step['result']}")
     print(f"答案: {result['answer']}")
     check("使用了多个工具", len(result["steps"]) >= 2)
     check("答案包含 9", "9" in result["answer"])
@@ -334,9 +358,9 @@ if __name__ == "__main__":
     print(f"步骤数: {len(result['steps'])}")
     for i, step in enumerate(result["steps"]):
         if step["type"] == "action":
-            print(f"  步骤 {i+1}: {step['tool']} → {step['result'][:80]}")
+            print(f"  步骤 {i + 1}: {step['tool']} → {step['result'][:80]}")
         elif step["type"] == "parse_error":
-            print(f"  步骤 {i+1}: parse_error → Agent 尝试修正格式")
+            print(f"  步骤 {i + 1}: parse_error → Agent 尝试修正格式")
     check("Agent 尝试处理了复杂字符串需求", len(result["answer"]) > 0)
 
     summary()

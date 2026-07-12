@@ -128,6 +128,6 @@ print("指标: Faithfulness / Answer Relevancy / ContextualPrecision / Contextua
 
 result = evaluate(test_cases=test_cases, metrics=metrics)
 
-print(f"\n{'='*60}")
+print(f"\n{'=' * 60}")
 print("评估完成")
-print(f"{'='*60}")
+print(f"{'=' * 60}")

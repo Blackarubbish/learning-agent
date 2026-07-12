@@ -70,8 +70,17 @@ def test_state_definition():
 
     try:
         hints = get_type_hints(TicketState)
-        required_fields = {"user_question", "category", "draft_response", "review_verdict", "retry_count"}
-        check(f"TicketState 包含 {len(required_fields)} 个核心字段", required_fields.issubset(hints.keys()))
+        required_fields = {
+            "user_question",
+            "category",
+            "draft_response",
+            "review_verdict",
+            "retry_count",
+        }
+        check(
+            f"TicketState 包含 {len(required_fields)} 个核心字段",
+            required_fields.issubset(hints.keys()),
+        )
     except Exception:
         # 回退：尝试用 total=False 的 TypedDict 特性
         check("TicketState 可实例化", True)  # TypedDict 本身不能实例化，但可以验证类型存在
@@ -91,8 +100,12 @@ def test_pipeline_execution():
         check("pipeline 标识为 langgraph", result.get("pipeline") == "langgraph")
     except NotImplementedError:
         for label in [
-            "流水线返回 dict", "包含 final_response", "包含 category 字段",
-            "category 为 technical", "包含 review_verdict 字段", "pipeline 标识为 langgraph",
+            "流水线返回 dict",
+            "包含 final_response",
+            "包含 category 字段",
+            "category 为 technical",
+            "包含 review_verdict 字段",
+            "pipeline 标识为 langgraph",
         ]:
             check(label, False, detail="TODO-FR-5b 尚未实现")
     except Exception as e:

@@ -136,7 +136,9 @@ async def async_search(query: str, top_k: int = 5) -> dict:
         results.append(
             {
                 "rank": i + 1,
-                "content": d.page_content[:150] + "..." if len(d.page_content) > 150 else d.page_content,
+                "content": d.page_content[:150] + "..."
+                if len(d.page_content) > 150
+                else d.page_content,
             }
         )
     return {"success": True, "results": results, "count": len(results)}
@@ -187,7 +189,9 @@ TOOLS_SCHEMA = [
     },
 ]
 
-SYSTEM_PROMPT = "你是一个 AI 研究助手。用中文回复。优先搜索知识库回答问题。如果搜索结果不够，可以对文档做摘要。"
+SYSTEM_PROMPT = (
+    "你是一个 AI 研究助手。用中文回复。优先搜索知识库回答问题。如果搜索结果不够，可以对文档做摘要。"
+)
 
 
 class AsyncAgent:
@@ -244,7 +248,11 @@ class AsyncAgent:
                 tc_result = await self._execute_tool(tool_name=tc_name, tool_args=tc_args)
                 messages.append(ToolMessage(content=tc_result, tool_call_id=tc.get("id", "")))
 
-        return {"answer": "Agent reached maximum steps", "success": False, "tool_calls": tool_calls_count}
+        return {
+            "answer": "Agent reached maximum steps",
+            "success": False,
+            "tool_calls": tool_calls_count,
+        }
 
     # TODO 4c: 同步版本（用于 benchmark 对比）
     def run_sync(self, user_input: str) -> dict:
@@ -267,27 +275,47 @@ class AsyncAgent:
             for tc in response.tool_calls:
                 tool_calls_count += 1
                 if tc["name"] == "search_knowledge":
-                    docs = vectorstore.similarity_search(tc["args"].get("query", ""), k=tc["args"].get("top_k", 5))
-                    result = json.dumps({
-                        "success": True,
-                        "results": [{"rank": i + 1, "content": d.page_content[:150]} for i, d in enumerate(docs)],
-                        "count": len(docs),
-                    }, ensure_ascii=False)
+                    docs = vectorstore.similarity_search(
+                        tc["args"].get("query", ""), k=tc["args"].get("top_k", 5)
+                    )
+                    result = json.dumps(
+                        {
+                            "success": True,
+                            "results": [
+                                {"rank": i + 1, "content": d.page_content[:150]}
+                                for i, d in enumerate(docs)
+                            ],
+                            "count": len(docs),
+                        },
+                        ensure_ascii=False,
+                    )
                 elif tc["name"] == "summarize_text":
                     text = tc["args"].get("text", "")
                     if len(text) > 2000:
                         text = text[:2000]
-                    summary_resp = llm.invoke([
-                        SystemMessage(content="你是一个中文文本摘要助手。"),
-                        HumanMessage(content=f"摘要（{tc['args'].get('max_words', 80)}字内）：{text}"),
-                    ])
-                    result = json.dumps({"success": True, "summary": summary_resp.content}, ensure_ascii=False)
+                    summary_resp = llm.invoke(
+                        [
+                            SystemMessage(content="你是一个中文文本摘要助手。"),
+                            HumanMessage(
+                                content=f"摘要（{tc['args'].get('max_words', 80)}字内）：{text}"
+                            ),
+                        ]
+                    )
+                    result = json.dumps(
+                        {"success": True, "summary": summary_resp.content}, ensure_ascii=False
+                    )
                 else:
-                    result = json.dumps({"success": False, "error": f"未知工具: {tc['name']}"}, ensure_ascii=False)
+                    result = json.dumps(
+                        {"success": False, "error": f"未知工具: {tc['name']}"}, ensure_ascii=False
+                    )
                 messages.append(ToolMessage(content=result, tool_call_id=tc.get("id", "")))
                 tool_calls_count += 1
 
-        return {"answer": "Agent reached maximum steps", "success": False, "tool_calls": tool_calls_count}
+        return {
+            "answer": "Agent reached maximum steps",
+            "success": False,
+            "tool_calls": tool_calls_count,
+        }
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -346,7 +374,9 @@ if __name__ == "__main__":
 
     # --- TODO 1: async_summarize ---
     section("TODO 1: 异步 LLM 调用")
-    result1 = asyncio.run(async_summarize("异步编程使用协程和事件循环，在 I/O 等待时切换到其他任务，提升并发吞吐。"))
+    result1 = asyncio.run(
+        async_summarize("异步编程使用协程和事件循环，在 I/O 等待时切换到其他任务，提升并发吞吐。")
+    )
     print(f"摘要: {result1.get('summary', '')[:100]}...")
     check("async_summarize 返回成功", result1.get("success"))
     check("包含 summary 字段", "summary" in result1)

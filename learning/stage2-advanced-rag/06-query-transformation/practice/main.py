@@ -41,17 +41,11 @@ class ZhipuEmbeddings(Embeddings):
         self.client = client
 
     def embed_documents(self, texts):
-        response = self.client.embeddings.create(
-            model="embedding-3",
-            input=texts
-        )
+        response = self.client.embeddings.create(model="embedding-3", input=texts)
         return [item.embedding for item in response.data]
 
     def embed_query(self, text):
-        response = self.client.embeddings.create(
-            model="embedding-3",
-            input=[text]
-        )
+        response = self.client.embeddings.create(model="embedding-3", input=[text])
         return response.data[0].embedding
 
 
@@ -61,7 +55,7 @@ llm = ChatOpenAI(
     model="deepseek-chat",
     temperature=0,
     openai_api_key=deepseek_api_key,
-    base_url="https://api.deepseek.com/v1"
+    base_url="https://api.deepseek.com/v1",
 )
 
 # 示例文档
@@ -98,7 +92,9 @@ class MultiQueryRetriever(BaseRetriever):
     原理：让 LLM 生成多个不同角度的查询版本，并行检索后合并结果
     """
 
-    def __init__(self, docs: List[Document], embeddings: Embeddings, llm: ChatOpenAI, num_queries: int = 5):
+    def __init__(
+        self, docs: List[Document], embeddings: Embeddings, llm: ChatOpenAI, num_queries: int = 5
+    ):
         super().__init__(docs, embeddings)
         self.num_queries = num_queries
         self.llm = llm
@@ -106,21 +102,22 @@ class MultiQueryRetriever(BaseRetriever):
 
     def _setup_chain(self):
         """设置查询生成 Chain"""
-        self.query_gen_chain = ChatPromptTemplate.from_template(
-            """你是一个信息检索专家。根据用户问题，生成 {num} 个不同的查询版本。
+        self.query_gen_chain = (
+            ChatPromptTemplate.from_template(
+                """你是一个信息检索专家。根据用户问题，生成 {num} 个不同的查询版本。
             每个查询应该从不同的角度或用不同的措辞来表达同一个问题。
 
             原始问题: {question}
 
             生成的查询（每行一个）:"""
-        ) | self.llm | StrOutputParser()
+            )
+            | self.llm
+            | StrOutputParser()
+        )
 
     def _generate_queries(self, query: str) -> List[str]:
         """生成多个查询版本"""
-        result = self.query_gen_chain.invoke({
-            "question": query,
-            "num_queries": self.num_queries
-        })
+        result = self.query_gen_chain.invoke({"question": query, "num_queries": self.num_queries})
         queries = [q.strip() for q in result.strip().split("\n") if q.strip()]
         return queries
 
@@ -176,8 +173,9 @@ class HyDERetriever(BaseRetriever):
 
     def _setup_chain(self):
         """设置假设文档生成 Chain"""
-        self.hyde_chain = ChatPromptTemplate.from_template(
-            """你是一个文档撰写专家。根据用户问题，生成一个假设性的答案文档。
+        self.hyde_chain = (
+            ChatPromptTemplate.from_template(
+                """你是一个文档撰写专家。根据用户问题，生成一个假设性的答案文档。
             这个文档应该：
             1. 直接回答问题
             2. 包含可能出现在真实文档中的关键词
@@ -186,7 +184,10 @@ class HyDERetriever(BaseRetriever):
             问题: {question}
 
             假设答案文档:"""
-        ) | self.llm | StrOutputParser()
+            )
+            | self.llm
+            | StrOutputParser()
+        )
 
     def retrieve(self, query: str, k: int = 3) -> List[Document]:
         """检索"""
@@ -214,14 +215,18 @@ class SubQueryRetriever(BaseRetriever):
 
     def _setup_chain(self):
         """设置问题分解 Chain"""
-        self.decompose_chain = ChatPromptTemplate.from_template(
-            """你是一个信息检索专家。将复杂问题拆分为2-3个简单的子问题。
+        self.decompose_chain = (
+            ChatPromptTemplate.from_template(
+                """你是一个信息检索专家。将复杂问题拆分为2-3个简单的子问题。
             每个子问题应该能够独立回答，并且合起来能回答原问题。
 
             复杂问题: {question}
 
             子问题（每行一个）:"""
-        ) | self.llm | StrOutputParser()
+            )
+            | self.llm
+            | StrOutputParser()
+        )
 
     def _deduplicate(self, docs: List[Document]) -> List[Document]:
         """去重"""

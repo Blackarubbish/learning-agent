@@ -36,17 +36,11 @@ class ZhipuEmbeddings(Embeddings):
         self.client = client
 
     def embed_documents(self, texts):
-        response = self.client.embeddings.create(
-            model="embedding-3",
-            input=texts
-        )
+        response = self.client.embeddings.create(model="embedding-3", input=texts)
         return [item.embedding for item in response.data]
 
     def embed_query(self, text):
-        response = self.client.embeddings.create(
-            model="embedding-3",
-            input=[text]
-        )
+        response = self.client.embeddings.create(model="embedding-3", input=[text])
         return response.data[0].embedding
 
 

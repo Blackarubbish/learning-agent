@@ -54,25 +54,71 @@ class ZhipuEmbeddings(Embeddings):
 embeddings = ZhipuEmbeddings(zhipu_client)
 
 SAMPLE_DOCS = [
-    Document(page_content="深度学习是机器学习的一个分支，它使用多层神经网络来学习数据的表征。", metadata={"id": 0, "topic": "AI基础"}),
-    Document(page_content="机器学习是人工智能的一个子领域，关注如何让计算机从数据中学习。", metadata={"id": 1, "topic": "AI基础"}),
-    Document(page_content="神经网络是受生物神经系统启发的一种计算模型，是深度学习的基础。", metadata={"id": 2, "topic": "AI基础"}),
-    Document(page_content="GPT是一种基于Transformer的大语言模型，由OpenAI开发。", metadata={"id": 3, "topic": "大模型"}),
-    Document(page_content="GPT-4是OpenAI最新的大型语言模型，具有强大的推理能力。", metadata={"id": 4, "topic": "大模型"}),
-    Document(page_content="ChatGPT是OpenAI开发的对话应用，基于GPT模型构建。", metadata={"id": 5, "topic": "大模型"}),
-    Document(page_content="计算机视觉是AI的一个分支，让计算机能够理解和处理图像。", metadata={"id": 6, "topic": "计算机视觉"}),
-    Document(page_content="卷积神经网络(CNN)是计算机视觉中常用的深度学习模型。", metadata={"id": 7, "topic": "计算机视觉"}),
-    Document(page_content="自然语言处理(NLP)是AI处理和理解人类语言的技术。", metadata={"id": 8, "topic": "NLP"}),
-    Document(page_content="Transformer架构是现代大语言模型的基础。", metadata={"id": 9, "topic": "大模型"}),
-    Document(page_content="Python是一种广泛使用的高级编程语言，由Guido van Rossum创建。", metadata={"id": 10, "topic": "编程语言"}),
-    Document(page_content="Rust是一种系统编程语言，注重安全性和性能。", metadata={"id": 11, "topic": "编程语言"}),
-    Document(page_content="FAISS是Facebook开发的向量相似度搜索库，支持大规模向量检索。", metadata={"id": 12, "topic": "向量检索"}),
-    Document(page_content="Redis是一种内存数据库，常用于缓存和消息队列。", metadata={"id": 13, "topic": "基础设施"}),
-    Document(page_content="Docker是一种容器化技术，用于打包和部署应用程序。", metadata={"id": 14, "topic": "基础设施"}),
+    Document(
+        page_content="深度学习是机器学习的一个分支，它使用多层神经网络来学习数据的表征。",
+        metadata={"id": 0, "topic": "AI基础"},
+    ),
+    Document(
+        page_content="机器学习是人工智能的一个子领域，关注如何让计算机从数据中学习。",
+        metadata={"id": 1, "topic": "AI基础"},
+    ),
+    Document(
+        page_content="神经网络是受生物神经系统启发的一种计算模型，是深度学习的基础。",
+        metadata={"id": 2, "topic": "AI基础"},
+    ),
+    Document(
+        page_content="GPT是一种基于Transformer的大语言模型，由OpenAI开发。",
+        metadata={"id": 3, "topic": "大模型"},
+    ),
+    Document(
+        page_content="GPT-4是OpenAI最新的大型语言模型，具有强大的推理能力。",
+        metadata={"id": 4, "topic": "大模型"},
+    ),
+    Document(
+        page_content="ChatGPT是OpenAI开发的对话应用，基于GPT模型构建。",
+        metadata={"id": 5, "topic": "大模型"},
+    ),
+    Document(
+        page_content="计算机视觉是AI的一个分支，让计算机能够理解和处理图像。",
+        metadata={"id": 6, "topic": "计算机视觉"},
+    ),
+    Document(
+        page_content="卷积神经网络(CNN)是计算机视觉中常用的深度学习模型。",
+        metadata={"id": 7, "topic": "计算机视觉"},
+    ),
+    Document(
+        page_content="自然语言处理(NLP)是AI处理和理解人类语言的技术。",
+        metadata={"id": 8, "topic": "NLP"},
+    ),
+    Document(
+        page_content="Transformer架构是现代大语言模型的基础。",
+        metadata={"id": 9, "topic": "大模型"},
+    ),
+    Document(
+        page_content="Python是一种广泛使用的高级编程语言，由Guido van Rossum创建。",
+        metadata={"id": 10, "topic": "编程语言"},
+    ),
+    Document(
+        page_content="Rust是一种系统编程语言，注重安全性和性能。",
+        metadata={"id": 11, "topic": "编程语言"},
+    ),
+    Document(
+        page_content="FAISS是Facebook开发的向量相似度搜索库，支持大规模向量检索。",
+        metadata={"id": 12, "topic": "向量检索"},
+    ),
+    Document(
+        page_content="Redis是一种内存数据库，常用于缓存和消息队列。",
+        metadata={"id": 13, "topic": "基础设施"},
+    ),
+    Document(
+        page_content="Docker是一种容器化技术，用于打包和部署应用程序。",
+        metadata={"id": 14, "topic": "基础设施"},
+    ),
 ]
 
 
 # ===== 检索器实现 =====
+
 
 class BM25Retriever:
     def __init__(self, docs):
@@ -117,7 +163,13 @@ class ZhipuReranker:
         resp = httpx.post(
             "https://open.bigmodel.cn/api/paas/v4/rerank",
             headers={"Authorization": f"Bearer {self.api_key}"},
-            json={"model": "rerank", "query": query, "documents": documents, "top_n": top_n, "return_documents": True},
+            json={
+                "model": "rerank",
+                "query": query,
+                "documents": documents,
+                "top_n": top_n,
+                "return_documents": True,
+            },
             timeout=30,
         )
         resp.raise_for_status()
@@ -135,7 +187,7 @@ def hybrid_rerank_retrieve(bm25_retriever, vector_retriever, reranker, query, k=
     bm25_results = bm25_retriever.retrieve(query, k=k * 2)
     vector_results = vector_retriever.retrieve(query, k=k * 2)
     fused = rrf_fusion([bm25_results, vector_results])
-    candidates = fused[:k * 3]
+    candidates = fused[: k * 3]
     candidate_texts = [doc.page_content for doc in candidates]
     rerank_results = reranker.rerank(query, candidate_texts, top_n=k)
     return [candidates[r["index"]] for r in rerank_results]

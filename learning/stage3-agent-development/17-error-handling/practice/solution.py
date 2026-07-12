@@ -104,7 +104,11 @@ def classify_error(error_message: str) -> StructuredError:
 
     # 按优先级检查：PERMANENT → RETRYABLE → PARAMETER_ERROR
     # PERMANENT 优先级最高，因为权限错误中的 "access denied" 不应该被 PARAMETER_ERROR 的 "not found" 误匹配
-    for category in [ErrorCategory.PERMANENT, ErrorCategory.RETRYABLE, ErrorCategory.PARAMETER_ERROR]:
+    for category in [
+        ErrorCategory.PERMANENT,
+        ErrorCategory.RETRYABLE,
+        ErrorCategory.PARAMETER_ERROR,
+    ]:
         for pattern in ERROR_PATTERNS[category]:
             if pattern in error_lower:
                 return StructuredError(
@@ -135,20 +139,35 @@ TOOL_BACKEND = {
 def get_weather(city: str) -> dict:
     """查询城市天气 — 三种失败模式演示三类错误。"""
     if not city or not city.strip():
-        return {"success": False, "error": f"invalid parameter: city '{city}' not found in weather database"}
+        return {
+            "success": False,
+            "error": f"invalid parameter: city '{city}' not found in weather database",
+        }
     if city == "超时测试":
-        return {"success": False, "error": "connection timed out after 30s — weather API unreachable"}
+        return {
+            "success": False,
+            "error": "connection timed out after 30s — weather API unreachable",
+        }
     if city == "无权限城市":
-        return {"success": False, "error": "permission denied: you don't have access to weather data for this region"}
+        return {
+            "success": False,
+            "error": "permission denied: you don't have access to weather data for this region",
+        }
     return {"success": True, "data": f"城市 {city}: 晴天 25°C, 湿度 60%, 风力 3 级"}
 
 
 def database_lookup(query: str, table: str) -> dict:
     """数据库查询 — 表不存在和权限错误。"""
     if table == "admin_logs" and not TOOL_BACKEND["admin_access"]:
-        return {"success": False, "error": "permission denied: insufficient privileges to access table 'admin_logs'"}
+        return {
+            "success": False,
+            "error": "permission denied: insufficient privileges to access table 'admin_logs'",
+        }
     if table not in TOOL_BACKEND or not TOOL_BACKEND.get(table):
-        return {"success": False, "error": f"table '{table}' not found in database — did you mean 'users' or 'products'?"}
+        return {
+            "success": False,
+            "error": f"table '{table}' not found in database — did you mean 'users' or 'products'?",
+        }
     return {"success": True, "data": f"[{table}] 查询 '{query}' 返回 3 条结果"}
 
 
@@ -161,7 +180,10 @@ TOOLS = {
 def execute_tool(tool_name: str, params: dict) -> dict:
     func = TOOLS.get(tool_name)
     if func is None:
-        return {"success": False, "error": f"unknown tool: '{tool_name}' — available tools: {list(TOOLS.keys())}"}
+        return {
+            "success": False,
+            "error": f"unknown tool: '{tool_name}' — available tools: {list(TOOLS.keys())}",
+        }
     try:
         return func(**params)
     except TypeError as e:
@@ -363,7 +385,12 @@ def test_permanent_error():
     print(f"尝试次数: {result['attempts']}")
     # 永久错误应该在 1 次工具调用后就停止
     check("永久错误立即停止（attempts=1）", result["attempts"] == 1)
-    check("Agent 告知无法完成", "无法" in result["answer"] or "权限" in result["answer"] or "permission" in result["answer"].lower())
+    check(
+        "Agent 告知无法完成",
+        "无法" in result["answer"]
+        or "权限" in result["answer"]
+        or "permission" in result["answer"].lower(),
+    )
     TOOL_BACKEND["admin_access"] = True
 
     summary()
@@ -382,7 +409,10 @@ def test_degradation():
     print(f"Agent 回答: {result['answer']}")
     print(f"尝试次数: {result['attempts']}")
     # degradation_threshold=2 意味着连续失败 2 次即降级
-    check("连续失败后触发降级", result["attempts"] <= 2 or "转交人类" in result["answer"] or "连续" in result["answer"])
+    check(
+        "连续失败后触发降级",
+        result["attempts"] <= 2 or "转交人类" in result["answer"] or "连续" in result["answer"],
+    )
 
     TOOL_BACKEND["admin_access"] = True
 

@@ -10,6 +10,7 @@ RAGAs 框架基础 — 参考实现（使用 common/ 模块消除 boilerplate）
     cd learning/stage2-advanced-rag/08-rag-evaluation/practice
     uv run python solution.py
 """
+
 import os
 import warnings
 
@@ -102,9 +103,12 @@ samples = [
 
 dataset = EvaluationDataset(samples=samples)
 check("数据集包含 5 条样本", len(samples) == 5, f"实际 {len(samples)} 条")
-check("案例2是幻觉场景", "James Gosling" in samples[1].response,
-      "案例2应包含错误信息 James Gosling（幻觉）",
-      fix="案例2的 response 应是故意写错的幻觉回答")
+check(
+    "案例2是幻觉场景",
+    "James Gosling" in samples[1].response,
+    "案例2应包含错误信息 James Gosling（幻觉）",
+    fix="案例2的 response 应是故意写错的幻觉回答",
+)
 
 
 def run_metric(metric, name: str):
@@ -156,21 +160,23 @@ if __name__ == "__main__":
         df = full_result.to_pandas()
         faithfulness_scores = df["faithfulness"].tolist()
 
-        check("至少评估了 5 个指标", len(df.columns) >= 5,
-              f"实际列数: {len(df.columns)}",
-              fix="检查 metrics 列表是否包含 5 个指标")
+        check(
+            "至少评估了 5 个指标",
+            len(df.columns) >= 5,
+            f"实际列数: {len(df.columns)}",
+            fix="检查 metrics 列表是否包含 5 个指标",
+        )
 
         # 幻觉案例的 Faithfulness 应该最低
         check(
             "幻觉案例的 Faithfulness 不是最高的",
-            faithfulness_scores[checkpoint_2_index] < 0.5 or
-            faithfulness_scores[checkpoint_2_index] <= min(faithfulness_scores),
+            faithfulness_scores[checkpoint_2_index] < 0.5
+            or faithfulness_scores[checkpoint_2_index] <= min(faithfulness_scores),
             f"案例2 Faithfulness={faithfulness_scores[1]:.3f}，预期应很低",
             fix="案例2是故意写错的幻觉回答，Faithfulness 应该接近 0",
         )
 
     except Exception as e:
-        check("结果可转为 DataFrame", False, str(e),
-              fix="检查 ragas 版本是否支持 to_pandas()")
+        check("结果可转为 DataFrame", False, str(e), fix="检查 ragas 版本是否支持 to_pandas()")
 
     summary()

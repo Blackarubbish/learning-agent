@@ -159,9 +159,15 @@ def get_weather(city: str) -> dict:
             "error": f"invalid parameter: city '{city}' not found in weather database",
         }
     if city == "超时测试":
-        return {"success": False, "error": "connection timed out after 30s — weather API unreachable"}
+        return {
+            "success": False,
+            "error": "connection timed out after 30s — weather API unreachable",
+        }
     if city == "无权限城市":
-        return {"success": False, "error": "permission denied: you don't have access to weather data for this region"}
+        return {
+            "success": False,
+            "error": "permission denied: you don't have access to weather data for this region",
+        }
     return {"success": True, "data": f"城市 {city}: 晴天 25°C, 湿度 60%, 风力 3 级"}
 
 
@@ -172,7 +178,10 @@ def database_lookup(query: str, table: str) -> dict:
     - table 为 "admin_logs" 且 admin_access=False 时返回权限错误
     """
     if table == "admin_logs" and not TOOL_BACKEND["admin_access"]:
-        return {"success": False, "error": "permission denied: insufficient privileges to access table 'admin_logs'"}
+        return {
+            "success": False,
+            "error": "permission denied: insufficient privileges to access table 'admin_logs'",
+        }
     if table not in TOOL_BACKEND or not TOOL_BACKEND.get(table):
         return {
             "success": False,
@@ -192,7 +201,10 @@ def execute_tool(tool_name: str, params: dict) -> dict:
     """执行工具调用，统一返回 {"success": bool, "data": str | None, "error": str | None}"""
     func = TOOLS.get(tool_name)
     if func is None:
-        return {"success": False, "error": f"unknown tool: '{tool_name}' — available tools: {list(TOOLS.keys())}"}
+        return {
+            "success": False,
+            "error": f"unknown tool: '{tool_name}' — available tools: {list(TOOLS.keys())}",
+        }
     try:
         return func(**params)
     except TypeError as e:
@@ -345,25 +357,19 @@ class ResilientAgent:
                     # TODO 4b-iii: 检查是否需要立即降级（永久错误或连续失败超阈值）
                     if structured_error.category == ErrorCategory.PERMANENT:
                         messages.append({"role": "assistant", "content": content})
-                        premanent_hint = (
-                            f"工具调用失败: {structured_error.summary}, 建议:{structured_error.suggested_fix}"
-                        )
+                        premanent_hint = f"工具调用失败: {structured_error.summary}, 建议:{structured_error.suggested_fix}"
                         messages.append({"role": "assistant", "content": premanent_hint})
                     if structured_error.category == ErrorCategory.RETRYABLE:
                         # 可重试错误，给出提示但继续重试
                         messages.append({"role": "assistant", "content": content})
-                        retry_content = (
-                            f"工具调用失败: {structured_error.summary} 建议:{structured_error.suggested_fix}"
-                        )
+                        retry_content = f"工具调用失败: {structured_error.summary} 建议:{structured_error.suggested_fix}"
                         messages.append({"role": "assistant", "content": retry_content})
                         # 继续循环重试同一调用})
                         continue
                     elif structured_error.category == ErrorCategory.PARAMETER_ERROR:
                         # 参数错误，提示 LLM 检查参数
                         messages.append({"role": "assistant", "content": content})
-                        param_fix_content = (
-                            f"工具调用失败: {structured_error.summary} 建议:{structured_error.suggested_fix}"
-                        )
+                        param_fix_content = f"工具调用失败: {structured_error.summary} 建议:{structured_error.suggested_fix}"
                         messages.append({"role": "assistant", "content": param_fix_content})
                         # 继续循环让 LLM 修正参数后重试
                         continue

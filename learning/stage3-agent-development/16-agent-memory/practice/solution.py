@@ -7,7 +7,15 @@
   - 提示词分层构建：系统指令 → 长期记忆 → 短期历史 → 当前输入
 """
 
-from common import load_dotenv_if_needed, get_or_create_embeddings, get_or_create_llm, section, check, reset, summary
+from common import (
+    load_dotenv_if_needed,
+    get_or_create_embeddings,
+    get_or_create_llm,
+    section,
+    check,
+    reset,
+    summary,
+)
 
 load_dotenv_if_needed()
 embeddings = get_or_create_embeddings()
@@ -77,7 +85,9 @@ class LongTermMemory:
 值得记住的信息示例：姓名、职业、偏好、技能、目标、经历等。"""
 
         response = llm.invoke(extraction_prompt)
-        response_text = response.content.strip() if hasattr(response, "content") else str(response).strip()
+        response_text = (
+            response.content.strip() if hasattr(response, "content") else str(response).strip()
+        )
 
         if response_text == "无":
             return []

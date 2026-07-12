@@ -39,7 +39,11 @@ class Agent:
             "请严格扮演这个角色，不要跳出角色。输出简洁、专业。"
         )
 
-        user_prompt = f"前置上下文：\n{context}\n\n当前任务：{task_description}" if context else task_description
+        user_prompt = (
+            f"前置上下文：\n{context}\n\n当前任务：{task_description}"
+            if context
+            else task_description
+        )
 
         # TODO 1: 调用 llm 生成回复，返回 content
         response = llm.invoke([SystemMessage(system_prompt), HumanMessage(user_prompt)])

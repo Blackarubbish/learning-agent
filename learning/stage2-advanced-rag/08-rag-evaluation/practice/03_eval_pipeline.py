@@ -54,6 +54,7 @@ generator_llm = ChatOpenAI(
     temperature=0,
 )
 
+
 # Embeddings
 class ZhipuEmbeddings(Embeddings):
     def __init__(self, api_key):
@@ -72,24 +73,61 @@ class ZhipuEmbeddings(Embeddings):
     def embed_query(self, text):
         return self.embed_documents([text])[0]
 
+
 embeddings = ZhipuEmbeddings(zhipu_api_key)
 
 
 # === 文档库 ===
 
 DOCUMENTS = [
-    Document(page_content="深度学习是机器学习的一个分支，它使用多层神经网络来学习数据的表征。深度学习在图像识别、语音识别和自然语言处理等领域取得了突破性进展。", metadata={"id": 0}),
-    Document(page_content="机器学习是人工智能的一个子领域，关注如何让计算机从数据中学习。主要方法包括监督学习、无监督学习和强化学习。", metadata={"id": 1}),
-    Document(page_content="神经网络是受生物神经系统启发的一种计算模型，是深度学习的基础。常见的神经网络架构包括CNN、RNN和Transformer。", metadata={"id": 2}),
-    Document(page_content="GPT是一种基于Transformer的大语言模型，由OpenAI开发。GPT-4是最新版本，具有强大的推理和多模态能力。", metadata={"id": 3}),
-    Document(page_content="Python是一种广泛使用的高级编程语言，由Guido van Rossum创建。Python在数据科学、机器学习和Web开发中非常流行。", metadata={"id": 4}),
-    Document(page_content="FAISS是Facebook开发的向量相似度搜索库，支持GPU加速和大规模向量检索，是构建RAG系统的常用工具。", metadata={"id": 5}),
-    Document(page_content="RAG（检索增强生成）是一种将信息检索与大语言模型结合的技术。它先检索相关文档，再将文档作为上下文提供给LLM生成答案。", metadata={"id": 6}),
-    Document(page_content="BM25是一种基于词频的概率检索算法，是Elasticsearch默认的相关性评分算法。它对精确关键词匹配非常有效。", metadata={"id": 7}),
-    Document(page_content="Transformer架构采用自注意力机制，是现代大语言模型的基础。它解决了RNN的序列依赖问题，支持并行计算。", metadata={"id": 8}),
-    Document(page_content="向量数据库（如Milvus、FAISS、Pinecone）专门用于存储和检索高维向量，是构建语义检索系统的核心组件。", metadata={"id": 9}),
-    Document(page_content="Rerank模型对初步检索结果进行二次排序，能显著提升检索精度。Cohere Rerank是常用的Rerank服务。", metadata={"id": 10}),
-    Document(page_content="LangChain是一个用于构建LLM应用的开源框架，提供了文档加载、切分、检索、生成等模块化组件。", metadata={"id": 11}),
+    Document(
+        page_content="深度学习是机器学习的一个分支，它使用多层神经网络来学习数据的表征。深度学习在图像识别、语音识别和自然语言处理等领域取得了突破性进展。",
+        metadata={"id": 0},
+    ),
+    Document(
+        page_content="机器学习是人工智能的一个子领域，关注如何让计算机从数据中学习。主要方法包括监督学习、无监督学习和强化学习。",
+        metadata={"id": 1},
+    ),
+    Document(
+        page_content="神经网络是受生物神经系统启发的一种计算模型，是深度学习的基础。常见的神经网络架构包括CNN、RNN和Transformer。",
+        metadata={"id": 2},
+    ),
+    Document(
+        page_content="GPT是一种基于Transformer的大语言模型，由OpenAI开发。GPT-4是最新版本，具有强大的推理和多模态能力。",
+        metadata={"id": 3},
+    ),
+    Document(
+        page_content="Python是一种广泛使用的高级编程语言，由Guido van Rossum创建。Python在数据科学、机器学习和Web开发中非常流行。",
+        metadata={"id": 4},
+    ),
+    Document(
+        page_content="FAISS是Facebook开发的向量相似度搜索库，支持GPU加速和大规模向量检索，是构建RAG系统的常用工具。",
+        metadata={"id": 5},
+    ),
+    Document(
+        page_content="RAG（检索增强生成）是一种将信息检索与大语言模型结合的技术。它先检索相关文档，再将文档作为上下文提供给LLM生成答案。",
+        metadata={"id": 6},
+    ),
+    Document(
+        page_content="BM25是一种基于词频的概率检索算法，是Elasticsearch默认的相关性评分算法。它对精确关键词匹配非常有效。",
+        metadata={"id": 7},
+    ),
+    Document(
+        page_content="Transformer架构采用自注意力机制，是现代大语言模型的基础。它解决了RNN的序列依赖问题，支持并行计算。",
+        metadata={"id": 8},
+    ),
+    Document(
+        page_content="向量数据库（如Milvus、FAISS、Pinecone）专门用于存储和检索高维向量，是构建语义检索系统的核心组件。",
+        metadata={"id": 9},
+    ),
+    Document(
+        page_content="Rerank模型对初步检索结果进行二次排序，能显著提升检索精度。Cohere Rerank是常用的Rerank服务。",
+        metadata={"id": 10},
+    ),
+    Document(
+        page_content="LangChain是一个用于构建LLM应用的开源框架，提供了文档加载、切分、检索、生成等模块化组件。",
+        metadata={"id": 11},
+    ),
 ]
 
 # === 测试问题 + 标准答案 ===
@@ -120,8 +158,10 @@ TEST_SET = [
 
 # === 检索器实现 ===
 
+
 class NaiveRetriever:
     """纯向量检索"""
+
     def __init__(self, docs, embeddings):
         self.docs = docs
         self.vectorstore = FAISS.from_documents(docs, embeddings)
@@ -132,6 +172,7 @@ class NaiveRetriever:
 
 class AdvancedRetriever:
     """混合检索(BM25+向量+RRF) + Rerank"""
+
     def __init__(self, docs, embeddings, api_key):
         self.docs = docs
         self.texts = [doc.page_content for doc in docs]
@@ -179,14 +220,16 @@ class AdvancedRetriever:
         # 1. BM25 检索
         tokenized_query = list(jieba.cut(query))
         bm25_scores = self.bm25.get_scores(tokenized_query)
-        bm25_top = sorted(range(len(bm25_scores)), key=lambda i: bm25_scores[i], reverse=True)[:k*2]
+        bm25_top = sorted(range(len(bm25_scores)), key=lambda i: bm25_scores[i], reverse=True)[
+            : k * 2
+        ]
         bm25_results = [self.docs[i] for i in bm25_top]
 
         # 2. 向量检索
-        vector_results = self.vectorstore.similarity_search(query, k=k*2)
+        vector_results = self.vectorstore.similarity_search(query, k=k * 2)
 
         # 3. RRF 融合
-        fused = self._rrf_fusion(bm25_results, vector_results)[:k*2]
+        fused = self._rrf_fusion(bm25_results, vector_results)[: k * 2]
 
         # 4. Rerank
         reranked = self._rerank(query, fused, top_n=k)
@@ -214,13 +257,14 @@ def generate_answer(query, contexts, llm):
 
 # === 运行 RAG 系统 + 收集评估数据 ===
 
+
 def run_rag_and_collect(retriever, test_set, llm, system_name):
     """运行 RAG 系统，收集 RAGAs 评估所需的数据"""
     samples = []
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"运行 {system_name}")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
 
     for item in test_set:
         query = item["question"]
@@ -258,11 +302,15 @@ print(f"评估指标: Faithfulness / Answer Relevancy / Context Precision / Cont
 
 # 构建 Naive RAG
 naive_retriever = NaiveRetriever(DOCUMENTS, embeddings)
-naive_samples = run_rag_and_collect(naive_retriever, TEST_SET, generator_llm, "Naive RAG (纯向量检索)")
+naive_samples = run_rag_and_collect(
+    naive_retriever, TEST_SET, generator_llm, "Naive RAG (纯向量检索)"
+)
 
 # 构建 Advanced RAG
 advanced_retriever = AdvancedRetriever(DOCUMENTS, embeddings, zhipu_api_key)
-advanced_samples = run_rag_and_collect(advanced_retriever, TEST_SET, generator_llm, "Advanced RAG (混合检索+Rerank)")
+advanced_samples = run_rag_and_collect(
+    advanced_retriever, TEST_SET, generator_llm, "Advanced RAG (混合检索+Rerank)"
+)
 
 # === RAGAs 评估 ===
 
@@ -278,25 +326,39 @@ for m in metrics:
     if hasattr(m, "generate_n"):
         m.generate_n = 1
 
-print(f"\n{'='*60}")
+print(f"\n{'=' * 60}")
 print("RAGAs 评估: Naive RAG")
-print(f"{'='*60}")
+print(f"{'=' * 60}")
 naive_dataset = EvaluationDataset(samples=naive_samples)
-naive_result = evaluate(naive_dataset, metrics=metrics, llm=evaluator_llm, embeddings=OpenAIEmbeddings(model="embedding-3", base_url="https://open.bigmodel.cn/api/paas/v4", api_key=zhipu_api_key))
+naive_result = evaluate(
+    naive_dataset,
+    metrics=metrics,
+    llm=evaluator_llm,
+    embeddings=OpenAIEmbeddings(
+        model="embedding-3", base_url="https://open.bigmodel.cn/api/paas/v4", api_key=zhipu_api_key
+    ),
+)
 print(naive_result)
 
-print(f"\n{'='*60}")
+print(f"\n{'=' * 60}")
 print("RAGAs 评估: Advanced RAG")
-print(f"{'='*60}")
+print(f"{'=' * 60}")
 advanced_dataset = EvaluationDataset(samples=advanced_samples)
-advanced_result = evaluate(advanced_dataset, metrics=metrics, llm=evaluator_llm, embeddings=OpenAIEmbeddings(model="embedding-3", base_url="https://open.bigmodel.cn/api/paas/v4", api_key=zhipu_api_key))
+advanced_result = evaluate(
+    advanced_dataset,
+    metrics=metrics,
+    llm=evaluator_llm,
+    embeddings=OpenAIEmbeddings(
+        model="embedding-3", base_url="https://open.bigmodel.cn/api/paas/v4", api_key=zhipu_api_key
+    ),
+)
 print(advanced_result)
 
 # === 对比报告 ===
 
-print(f"\n{'='*60}")
+print(f"\n{'=' * 60}")
 print("对比报告: Naive RAG vs Advanced RAG")
-print(f"{'='*60}")
+print(f"{'=' * 60}")
 
 metric_names = ["faithfulness", "answer_relevancy", "context_precision", "context_recall"]
 print(f"{'指标':<25} {'Naive RAG':<15} {'Advanced RAG':<15} {'变化':<10}")
@@ -324,7 +386,13 @@ a_prec = adv_scores.get("context_precision", 0)
 n_recall = naive_scores.get("context_recall", 0)
 a_recall = adv_scores.get("context_recall", 0)
 
-print(f"  - Faithfulness: Advanced RAG {'提升' if a_faith > n_faith else '下降/持平'} (Rerank 过滤不相关噪声 → 答案更忠实)")
-print(f"  - Context Precision: Advanced RAG {'提升' if a_prec > n_prec else '下降/持平'} (Rerank 重排 → 相关文档更靠前)")
-print(f"  - Context Recall: Advanced RAG {'提升' if a_recall > n_recall else '下降/持平'} (混合检索 → 覆盖更广)")
+print(
+    f"  - Faithfulness: Advanced RAG {'提升' if a_faith > n_faith else '下降/持平'} (Rerank 过滤不相关噪声 → 答案更忠实)"
+)
+print(
+    f"  - Context Precision: Advanced RAG {'提升' if a_prec > n_prec else '下降/持平'} (Rerank 重排 → 相关文档更靠前)"
+)
+print(
+    f"  - Context Recall: Advanced RAG {'提升' if a_recall > n_recall else '下降/持平'} (混合检索 → 覆盖更广)"
+)
 print(f"  - Answer Relevancy: 两个系统生成的答案相似，差异主要来自检索质量的影响")

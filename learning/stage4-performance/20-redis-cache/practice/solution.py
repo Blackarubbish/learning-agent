@@ -12,7 +12,14 @@ from io import StringIO
 
 from fakeredis import FakeRedis
 
-from common import get_or_create_embeddings, get_or_create_llm, load_dotenv_if_needed, reset, section, summary
+from common import (
+    get_or_create_embeddings,
+    get_or_create_llm,
+    load_dotenv_if_needed,
+    reset,
+    section,
+    summary,
+)
 from common.cache import ExactMatchCache, SemanticCache
 from common.check import check
 

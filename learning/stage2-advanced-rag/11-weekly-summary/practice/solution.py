@@ -7,7 +7,15 @@ Week 2 综合实战：Advanced RAG 系统 — 完整实现
   uv run python learning/stage2-advanced-rag/11-weekly-summary/practice/solution.py
 """
 
-from common import load_dotenv_if_needed, get_or_create_embeddings, get_or_create_llm, section, check, summary, reset
+from common import (
+    load_dotenv_if_needed,
+    get_or_create_embeddings,
+    get_or_create_llm,
+    section,
+    check,
+    summary,
+    reset,
+)
 
 load_dotenv_if_needed()
 embeddings = get_or_create_embeddings()
@@ -49,10 +57,15 @@ class NaiveRAG:
     def __init__(self, docs: List[Document]):
         self.docs = docs
         self.vectorstore = FAISS.from_documents(docs, embeddings)
-        self.prompt = ChatPromptTemplate.from_messages([
-            ("system", "你是一个智能助手，使用以下上下文回答问题。如果上下文中没有相关信息，请如实说明。\n\n上下文：\n{context}"),
-            ("human", "{question}"),
-        ])
+        self.prompt = ChatPromptTemplate.from_messages(
+            [
+                (
+                    "system",
+                    "你是一个智能助手，使用以下上下文回答问题。如果上下文中没有相关信息，请如实说明。\n\n上下文：\n{context}",
+                ),
+                ("human", "{question}"),
+            ]
+        )
         self.chain = self.prompt | llm | StrOutputParser()
 
     def ask(self, question: str, k: int = 3) -> dict:
@@ -73,7 +86,13 @@ class Reranker:
         resp = httpx.post(
             self.base_url,
             headers={"Authorization": f"Bearer {self.api_key}"},
-            json={"model": "rerank", "query": query, "documents": documents, "top_n": top_n, "return_documents": True},
+            json={
+                "model": "rerank",
+                "query": query,
+                "documents": documents,
+                "top_n": top_n,
+                "return_documents": True,
+            },
             timeout=30,
         )
         resp.raise_for_status()
@@ -116,10 +135,15 @@ class AdvancedRAG:
         self.reranker = Reranker(rerank_api_key) if rerank_api_key else None
 
         # 生成 Chain
-        self.generate_prompt = ChatPromptTemplate.from_messages([
-            ("system", "你是一个智能助手，使用以下上下文回答问题。如果上下文中没有相关信息，请如实说明。\n\n上下文：\n{context}"),
-            ("human", "{question}"),
-        ])
+        self.generate_prompt = ChatPromptTemplate.from_messages(
+            [
+                (
+                    "system",
+                    "你是一个智能助手，使用以下上下文回答问题。如果上下文中没有相关信息，请如实说明。\n\n上下文：\n{context}",
+                ),
+                ("human", "{question}"),
+            ]
+        )
         self.generate_chain = self.generate_prompt | llm | StrOutputParser()
 
     # ============ Query Transformation ============
@@ -179,10 +203,12 @@ class AdvancedRAG:
         final = []
         for r in results:
             doc = docs[r["index"]]
-            final.append(Document(
-                page_content=doc.page_content,
-                metadata={**doc.metadata, "rerank_score": r["relevance_score"]},
-            ))
+            final.append(
+                Document(
+                    page_content=doc.page_content,
+                    metadata={**doc.metadata, "rerank_score": r["relevance_score"]},
+                )
+            )
         return final
 
     # ============ 检索主入口 ============
@@ -257,7 +283,9 @@ def compare_rag_systems():
         # 断言
         check(f"Naive RAG 有上下文", len(naive_result["contexts"]) > 0)
         check(f"Advanced RAG 有上下文", len(advanced_result["contexts"]) > 0)
-        check("两者返回了答案", len(naive_result["answer"]) > 0 and len(advanced_result["answer"]) > 0)
+        check(
+            "两者返回了答案", len(naive_result["answer"]) > 0 and len(advanced_result["answer"]) > 0
+        )
 
     summary()
 

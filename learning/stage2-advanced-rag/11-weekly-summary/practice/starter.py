@@ -96,7 +96,10 @@ class NaiveRAG:
     def _setup_prompt(self):
         self.prompt = ChatPromptTemplate.from_messages(
             [
-                ("system", "你是一个智能助手，使用以下上下文回答问题。如果上下文中没有相关信息，请如实说明。\n\n上下文：\n{context}"),
+                (
+                    "system",
+                    "你是一个智能助手，使用以下上下文回答问题。如果上下文中没有相关信息，请如实说明。\n\n上下文：\n{context}",
+                ),
                 ("human", "{question}"),
             ]
         )
@@ -255,9 +258,9 @@ def compare_rag_systems():
     advanced = AdvancedRAG(SAMPLE_DOCS)
 
     test_queries = [
-        "深度学习和人工智能有什么关系？",   # 语义查询 — 同义词/概念关联
-        "OpenAI 有哪些模型？",              # 精确查询 — 特定关键词
-        "用什么语言做向量检索？",           # 混合查询 — 语义+关键词
+        "深度学习和人工智能有什么关系？",  # 语义查询 — 同义词/概念关联
+        "OpenAI 有哪些模型？",  # 精确查询 — 特定关键词
+        "用什么语言做向量检索？",  # 混合查询 — 语义+关键词
     ]
 
     for query in test_queries:

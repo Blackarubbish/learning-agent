@@ -65,7 +65,11 @@ llm = get_or_create_llm(temperature=0)
 def search_knowledge(query: str, top_k: int = 5) -> dict:
     """搜索知识库——信息抽象：截断 top_k 条 + 摘要引导。"""
     if not query.strip():
-        return {"success": False, "error": "query 不能为空，请提供有效的查询关键词", "category": "parameter_error"}
+        return {
+            "success": False,
+            "error": "query 不能为空，请提供有效的查询关键词",
+            "category": "parameter_error",
+        }
     try:
         docs = vectorstore.similarity_search(query, k=top_k)
     except Exception as e:
@@ -80,12 +84,16 @@ def search_knowledge(query: str, top_k: int = 5) -> dict:
     for i, d in enumerate(docs):
         result_item = {
             "rank": i + 1,
-            "content": d.page_content[:150] + "..." if len(d.page_content) > 150 else d.page_content,
+            "content": d.page_content[:150] + "..."
+            if len(d.page_content) > 150
+            else d.page_content,
         }
         result["results"].append(result_item)
 
     result["count"] = len(result["results"])
-    result["summary"] = f"共找到 {result['count']} 条相关文档。如需更详细的信息，请用 summarize_text 对指定文档做摘要"
+    result["summary"] = (
+        f"共找到 {result['count']} 条相关文档。如需更详细的信息，请用 summarize_text 对指定文档做摘要"
+    )
     return result
 
 
@@ -93,7 +101,11 @@ def search_knowledge(query: str, top_k: int = 5) -> dict:
 def summarize_text(text: str, max_words: int = 80) -> dict:
     """调用 LLM 做文本摘要——结构化输出。"""
     if not text.strip():
-        return {"success": False, "error": "text 不能为空，请提供有效的文本内容", "category": "parameter_error"}
+        return {
+            "success": False,
+            "error": "text 不能为空，请提供有效的文本内容",
+            "category": "parameter_error",
+        }
     if len(text) > 2000:
         text = text[:2000]
     try:
@@ -109,10 +121,16 @@ def summarize_text(text: str, max_words: int = 80) -> dict:
 
 
 # TODO 1c: 实现 save_note
-def save_note(content: str, tags: list[str] | None = None, ltm: LongTermMemory | None = None) -> dict:
+def save_note(
+    content: str, tags: list[str] | None = None, ltm: LongTermMemory | None = None
+) -> dict:
     """将关键信息写入长期记忆——状态反馈。"""
     if not content.strip():
-        return {"success": False, "error": "content 不能为空，请提供有效的笔记内容", "category": "parameter_error"}
+        return {
+            "success": False,
+            "error": "content 不能为空，请提供有效的笔记内容",
+            "category": "parameter_error",
+        }
     try:
         if ltm is None:
             ltm = LongTermMemory()
@@ -164,7 +182,11 @@ TOOLS_SCHEMA: list[dict] = [
                 "type": "object",
                 "properties": {
                     "content": {"type": "string", "description": "需要保存的笔记内容"},
-                    "tags": {"type": "array", "items": {"type": "string"}, "description": "笔记标签列表，默认为空"},
+                    "tags": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "笔记标签列表，默认为空",
+                    },
                 },
                 "required": ["content"],
             },
@@ -173,7 +195,11 @@ TOOLS_SCHEMA: list[dict] = [
 ]
 
 # 工具名→函数映射表
-TOOL_FUNCTIONS = {"search_knowledge": search_knowledge, "summarize_text": summarize_text, "save_note": save_note}
+TOOL_FUNCTIONS = {
+    "search_knowledge": search_knowledge,
+    "summarize_text": summarize_text,
+    "save_note": save_note,
+}
 
 # ═══════════════════════════════════════════════════════════════
 # ResearchAssistant Agent
@@ -291,11 +317,15 @@ class ResearchAssistant:
                         notcallable_msg = json.dumps(
                             {
                                 "success": False,
-                                "error": _structured_error(f"invalid parameter: {tool_name} 不是一个可调用的函数"),
+                                "error": _structured_error(
+                                    f"invalid parameter: {tool_name} 不是一个可调用的函数"
+                                ),
                             },
                             ensure_ascii=False,
                         )
-                        messages.append(ToolMessage(content=notcallable_msg, tool_call_id=call["id"]))
+                        messages.append(
+                            ToolMessage(content=notcallable_msg, tool_call_id=call["id"])
+                        )
                         continue
 
                     # save_note 需要注入 ltm，让记忆写入测试可见的 LongTermMemory 实例
@@ -307,7 +337,10 @@ class ResearchAssistant:
 
                     if result.get("success"):
                         messages.append(
-                            ToolMessage(content=json.dumps(result, ensure_ascii=False), tool_call_id=call["id"])
+                            ToolMessage(
+                                content=json.dumps(result, ensure_ascii=False),
+                                tool_call_id=call["id"],
+                            )
                         )
                         consecutive_failures = 0
                     else:
@@ -356,7 +389,9 @@ class ResearchAssistant:
                     error_msg = _structured_error(f"running error: 工具 {tool_name} 执行失败: {e}")
                     messages.append(
                         ToolMessage(
-                            content=json.dumps({"success": False, "error": error_msg}, ensure_ascii=False),
+                            content=json.dumps(
+                                {"success": False, "error": error_msg}, ensure_ascii=False
+                            ),
                             tool_call_id=call["id"],
                         )
                     )
@@ -379,7 +414,10 @@ def test_normal_retrieval():
     """场景 1：正常知识检索——"什么是 RAG？它和 ReAct 有什么区别？"""
     reset()
     assistant = ResearchAssistant(
-        short_term=ShortTermMemory(), long_term=LongTermMemory(), max_retries=5, degradation_threshold=3
+        short_term=ShortTermMemory(),
+        long_term=LongTermMemory(),
+        max_retries=5,
+        degradation_threshold=3,
     )
     section("场景 1：正常知识检索")
     result = assistant.run("什么是 RAG？它和 ReAct 有什么区别？")
@@ -416,7 +454,9 @@ def test_memory_persistence():
     assistant = ResearchAssistant(short_term=ShortTermMemory(), long_term=ltm)
 
     section("场景 3：长期记忆 — 保存偏好")
-    result1 = assistant.run("记住：我最关注的是 RAG 和 ReAct 相关的内容，我喜欢用表格对比的方式呈现信息")
+    result1 = assistant.run(
+        "记住：我最关注的是 RAG 和 ReAct 相关的内容，我喜欢用表格对比的方式呈现信息"
+    )
     print(f"第一轮: {result1['answer']}")
     check("第一轮成功", result1["success"])
 
@@ -433,7 +473,9 @@ def test_memory_persistence():
 def test_summarize():
     """场景 4：文本摘要——调用 LLM 对搜索结果做摘要。"""
     reset()
-    assistant = ResearchAssistant(short_term=ShortTermMemory(), long_term=LongTermMemory(), max_retries=3)
+    assistant = ResearchAssistant(
+        short_term=ShortTermMemory(), long_term=LongTermMemory(), max_retries=3
+    )
 
     section("场景 4：文本摘要")
     result = assistant.run("帮我搜索 Agent Memory 的内容，然后对找到的结果做一个摘要")
@@ -455,11 +497,16 @@ def test_degradation():
     """场景 5：降级策略——连续参数错误后停止循环。"""
     reset()
     assistant = ResearchAssistant(
-        short_term=ShortTermMemory(), long_term=LongTermMemory(), max_retries=5, degradation_threshold=3
+        short_term=ShortTermMemory(),
+        long_term=LongTermMemory(),
+        max_retries=5,
+        degradation_threshold=3,
     )
 
     section("场景 5：降级策略")
-    result = assistant.run("帮我保存一个空的笔记，然后搜索空内容，最后再试一次空摘要——重复直到你放弃")
+    result = assistant.run(
+        "帮我保存一个空的笔记，然后搜索空内容，最后再试一次空摘要——重复直到你放弃"
+    )
     print(f"Agent 回答: {result['answer']}")
     print(f"工具调用次数: {result['attempts']}")
     check("Agent 未无限循环", result["attempts"] <= 5)

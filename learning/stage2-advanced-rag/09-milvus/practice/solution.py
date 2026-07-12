@@ -48,16 +48,76 @@ def mock_vector(seed):
 
 
 articles = [
-    {"id": 1, "vector": mock_vector(1), "text": "深度学习是机器学习的一个分支，使用多层神经网络。", "category": "AI基础", "year": 2023},
-    {"id": 2, "vector": mock_vector(2), "text": "GPT-4是OpenAI发布的大语言模型，具有强大的推理能力。", "category": "大模型", "year": 2024},
-    {"id": 3, "vector": mock_vector(3), "text": "Python在数据科学和机器学习中被广泛使用。", "category": "编程语言", "year": 2023},
-    {"id": 4, "vector": mock_vector(4), "text": "Transformer架构采用自注意力机制，是现代LLM的基础。", "category": "AI基础", "year": 2024},
-    {"id": 5, "vector": mock_vector(5), "text": "FAISS是Facebook开发的向量相似度搜索库。", "category": "向量检索", "year": 2023},
-    {"id": 6, "vector": mock_vector(6), "text": "Milvus是高性能开源向量数据库，支持十亿级向量。", "category": "向量检索", "year": 2024},
-    {"id": 7, "vector": mock_vector(7), "text": "RAG技术将信息检索与大语言模型结合，减少幻觉。", "category": "大模型", "year": 2024},
-    {"id": 8, "vector": mock_vector(8), "text": "CNN卷积神经网络在图像识别中表现出色。", "category": "AI基础", "year": 2022},
-    {"id": 9, "vector": mock_vector(9), "text": "Rust语言注重安全性和性能，适合系统编程。", "category": "编程语言", "year": 2023},
-    {"id": 10, "vector": mock_vector(10), "text": "HNSW是一种基于图的近似最近邻搜索算法。", "category": "向量检索", "year": 2024},
+    {
+        "id": 1,
+        "vector": mock_vector(1),
+        "text": "深度学习是机器学习的一个分支，使用多层神经网络。",
+        "category": "AI基础",
+        "year": 2023,
+    },
+    {
+        "id": 2,
+        "vector": mock_vector(2),
+        "text": "GPT-4是OpenAI发布的大语言模型，具有强大的推理能力。",
+        "category": "大模型",
+        "year": 2024,
+    },
+    {
+        "id": 3,
+        "vector": mock_vector(3),
+        "text": "Python在数据科学和机器学习中被广泛使用。",
+        "category": "编程语言",
+        "year": 2023,
+    },
+    {
+        "id": 4,
+        "vector": mock_vector(4),
+        "text": "Transformer架构采用自注意力机制，是现代LLM的基础。",
+        "category": "AI基础",
+        "year": 2024,
+    },
+    {
+        "id": 5,
+        "vector": mock_vector(5),
+        "text": "FAISS是Facebook开发的向量相似度搜索库。",
+        "category": "向量检索",
+        "year": 2023,
+    },
+    {
+        "id": 6,
+        "vector": mock_vector(6),
+        "text": "Milvus是高性能开源向量数据库，支持十亿级向量。",
+        "category": "向量检索",
+        "year": 2024,
+    },
+    {
+        "id": 7,
+        "vector": mock_vector(7),
+        "text": "RAG技术将信息检索与大语言模型结合，减少幻觉。",
+        "category": "大模型",
+        "year": 2024,
+    },
+    {
+        "id": 8,
+        "vector": mock_vector(8),
+        "text": "CNN卷积神经网络在图像识别中表现出色。",
+        "category": "AI基础",
+        "year": 2022,
+    },
+    {
+        "id": 9,
+        "vector": mock_vector(9),
+        "text": "Rust语言注重安全性和性能，适合系统编程。",
+        "category": "编程语言",
+        "year": 2023,
+    },
+    {
+        "id": 10,
+        "vector": mock_vector(10),
+        "text": "HNSW是一种基于图的近似最近邻搜索算法。",
+        "category": "向量检索",
+        "year": 2024,
+    },
 ]
 
 client.insert(collection_name=COLLECTION, data=articles)
@@ -68,7 +128,13 @@ print(f"插入 {len(articles)} 条数据")
 client.insert(
     collection_name=COLLECTION,
     data=[
-        {"id": 11, "vector": mock_vector(11), "text": "LangChain是构建LLM应用的开源框架。", "category": "大模型", "year": 2024},
+        {
+            "id": 11,
+            "vector": mock_vector(11),
+            "text": "LangChain是构建LLM应用的开源框架。",
+            "category": "大模型",
+            "year": 2024,
+        },
     ],
 )
 print("增量插入 1 条 (id=11)")
@@ -117,7 +183,9 @@ search_results = client.search(
 )
 print("向量搜索 top-5:")
 for hit in search_results[0]:
-    print(f"  id={hit['entity']['id']}, distance={hit['distance']:.4f}, text={hit['entity']['text'][:30]}...")
+    print(
+        f"  id={hit['entity']['id']}, distance={hit['distance']:.4f}, text={hit['entity']['text'][:30]}..."
+    )
 
 
 # ============================================================
@@ -126,17 +194,27 @@ for hit in search_results[0]:
 # upsert = 存在则更新，不存在则插入
 # FAISS 没有原生更新——必须删除旧数据 + 重建索引
 
-before = client.query(collection_name=COLLECTION, filter="id == 1", output_fields=["id", "text", "year"])
+before = client.query(
+    collection_name=COLLECTION, filter="id == 1", output_fields=["id", "text", "year"]
+)
 print(f"更新前 year={before[0]['year']}")
 
 client.upsert(
     collection_name=COLLECTION,
     data=[
-        {"id": 1, "vector": mock_vector(1), "text": "深度学习是机器学习的一个分支，使用多层神经网络来学习数据表征。", "category": "AI基础", "year": 2024},
+        {
+            "id": 1,
+            "vector": mock_vector(1),
+            "text": "深度学习是机器学习的一个分支，使用多层神经网络来学习数据表征。",
+            "category": "AI基础",
+            "year": 2024,
+        },
     ],
 )
 
-after = client.query(collection_name=COLLECTION, filter="id == 1", output_fields=["id", "text", "year"])
+after = client.query(
+    collection_name=COLLECTION, filter="id == 1", output_fields=["id", "text", "year"]
+)
 print(f"更新后 year={after[0]['year']}")
 
 
@@ -152,7 +230,9 @@ print("删除 id=11")
 client.delete(collection_name=COLLECTION, filter='category == "编程语言"')
 print("批量删除 category=='编程语言'")
 
-remaining = client.query(collection_name=COLLECTION, filter='category == "编程语言"', output_fields=["id"])
+remaining = client.query(
+    collection_name=COLLECTION, filter='category == "编程语言"', output_fields=["id"]
+)
 print(f"删除后 剩余编程语言: {len(remaining)} 条")
 
 
