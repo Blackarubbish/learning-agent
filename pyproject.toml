@@ -23,6 +23,7 @@ dependencies = [
     "rank-bm25>=0.2.2",
     "recursivecharactertextsplitter>=0.1.0",
     "setuptools<82",
+    "tavily-python>=0.7.26",
     "unstructured[html]>=0.22.23",
     "uvicorn>=0.44.0",
     "zai-sdk>=0.2.2",
