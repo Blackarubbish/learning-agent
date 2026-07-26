@@ -11,13 +11,19 @@ wheels/
 
 # Environment variables
 .env
+.env.local
+.env.*
+!.env.example
+
+# Outputs and generated data (root only)
+/outputs/
+/data/
+/logs/
+*.log
 
 # FAISS indices
 faiss_index/
 indices/
-
-# Agent guide
-AgentGuide/
 
 # Milvus database files
 *.db
@@ -29,5 +35,28 @@ AgentGuide/
 server.log
 uploads/
 
-# Markmap generated HTML (regenerate with: npx markmap-cli)
-learning/**/mindmap.html
+# Jupyter checkpoints
+.ipynb_checkpoints
+
+# Markmap generated HTML
+study/learning/**/mindmap.html
+
+# Reference repositories
+ref/
+
+# IDE
+.vscode/
+.idea/
+
+# Ruff cache
+.ruff_cache/
+
+# Study / Practice member-specific caches
+study/.ruff_cache/
+practice/.ruff_cache/
+
+# Local tool directories
+.kilo/
+
+# Generated output directories
+output/
